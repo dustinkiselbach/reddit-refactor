@@ -7,6 +7,11 @@ import axios from 'axios'
 import { GET_POSTS, TEST_TYPE, SET_SUBREDDIT, SET_LOADING } from '../types'
 import { Props } from './redditTypes'
 
+// subreddit
+// https://www.reddit.com/api/info.json?id={subreddit_id}
+// detail
+// https://www.reddit.com/{permalink}
+
 const RedditState: React.FC<Props> = ({ children }) => {
   const initialState = {
     loading: false,
@@ -20,8 +25,10 @@ const RedditState: React.FC<Props> = ({ children }) => {
     setLoading()
     try {
       const res = await axios.get(
-        `http://www.reddit.com/r/${state.subreddit}.json?raw_json=1`
+        `https://www.reddit.com/r/${state.subreddit}.json?raw_json=1`
       )
+
+      console.log(res)
 
       dispatch({ type: GET_POSTS, payload: res.data.data.children })
     } catch (err) {

@@ -43,7 +43,7 @@ export const Navbar: React.FC<Props> = ({ setTheme, theme }) => {
         <span className='material-icons'>refresh</span>
       </NavIcon>
       <NavIcon>
-        <span className='material-icons'>legend_toggle</span>
+        <span className='material-icons'>sort</span>
       </NavIcon>
       <NavIcon>
         <span className='material-icons'>more_vert</span>
@@ -62,6 +62,7 @@ const Nav = styled.nav<{ visible: boolean }>`
   background-color: ${props => props.theme.colors.backgroundColor};
   transform: translateY(${props => (props.visible ? '0' : '-100px')});
   transition: all 0.2s ease-in-out;
+  z-index: 1;
 `
 const NavIcon = styled.div`
   border-radius: 100%;
