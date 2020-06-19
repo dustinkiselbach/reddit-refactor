@@ -1,5 +1,7 @@
 [build]
-  publish="build"
+base = "reddit-refactor/"
+publish = "reddit-refactor/build/"
+command = "yarn build"
 
 [[redirects]]
   from = "/*"
