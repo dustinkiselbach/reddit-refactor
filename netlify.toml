@@ -1,7 +1,7 @@
 [build]
-base = "reddit-refactor/"
-publish = "reddit-refactor/build/"
-command = "yarn build"
+  command = "npm run build"
+  publish="build"
+
 
 [[redirects]]
   from = "/*"
