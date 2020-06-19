@@ -4,7 +4,7 @@ import redditReducer from './redditReducer'
 
 import axios from 'axios'
 
-import { GET_POSTS, TEST_TYPE, SET_SUBREDDIT } from '../types'
+import { GET_POSTS, TEST_TYPE, SET_SUBREDDIT, SET_LOADING } from '../types'
 import { Props } from './redditTypes'
 
 const RedditState: React.FC<Props> = ({ children }) => {
@@ -17,6 +17,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(redditReducer, initialState)
 
   const getPosts = async () => {
+    setLoading()
     try {
       const res = await axios.get(
         `http://www.reddit.com/r/${state.subreddit}.json?raw_json=1`
@@ -30,6 +31,10 @@ const RedditState: React.FC<Props> = ({ children }) => {
 
   const setSubreddit = (subreddit: string | null) => {
     dispatch({ type: SET_SUBREDDIT, payload: subreddit })
+  }
+
+  const setLoading = () => {
+    dispatch({ type: SET_LOADING, payload: null })
   }
 
   const tryTest = () => {

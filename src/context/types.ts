@@ -3,3 +3,4 @@ export const TEST_TYPE = 'TEST_TYPE'
 // REDDIT REDUCER TYPES
 export const GET_POSTS = 'GET_POSTS'
 export const SET_SUBREDDIT = 'SET_SUBREDDIT'
+export const SET_LOADING = 'SET_LOADING'

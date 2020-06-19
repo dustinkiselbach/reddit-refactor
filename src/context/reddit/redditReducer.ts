@@ -1,4 +1,4 @@
-import { GET_POSTS, TEST_TYPE, SET_SUBREDDIT } from '../types'
+import { GET_POSTS, TEST_TYPE, SET_SUBREDDIT, SET_LOADING } from '../types'
 import { State, AllActions } from './redditTypes'
 
 export default (state: State, action: AllActions): State => {
@@ -12,13 +12,20 @@ export default (state: State, action: AllActions): State => {
     case GET_POSTS: {
       return {
         ...state,
-        posts: action.payload
+        posts: action.payload,
+        loading: false
       }
     }
     case SET_SUBREDDIT: {
       return {
         ...state,
         subreddit: action.payload
+      }
+    }
+    case SET_LOADING: {
+      return {
+        ...state,
+        loading: true
       }
     }
     default:

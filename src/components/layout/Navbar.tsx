@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import RedditContext from '../../context/reddit/redditContext'
 
@@ -8,20 +8,77 @@ interface Props {
 }
 
 export const Navbar: React.FC<Props> = ({ setTheme, theme }) => {
-  const redditContext = useContext(RedditContext)
+  const [prevScrollPos, setScrollPos] = useState(window.pageYOffset)
+  const [visible, setVisible] = useState(true)
 
+  const redditContext = useContext(RedditContext)
   const { getPosts } = redditContext
 
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  })
+
+  // Hide or show the menu.
+  const handleScroll = () => {
+    const currentScrollPos = window.pageYOffset
+    const visible = prevScrollPos > currentScrollPos
+
+    setScrollPos(currentScrollPos)
+    setVisible(visible)
+  }
+
   return (
-    <Nav>
-      <Brand onClick={getPosts}>blah</Brand>
+    <Nav visible={visible}>
+      <NavIcon>
+        <span className='material-icons'>menu</span>
+      </NavIcon>
+      <h2>frontpage</h2>
+      <NavIcon>
+        <span className='material-icons'>arrow_drop_down</span>
+      </NavIcon>
+
+      <NavIcon onClick={getPosts}>
+        <span className='material-icons'>refresh</span>
+      </NavIcon>
+      <NavIcon>
+        <span className='material-icons'>legend_toggle</span>
+      </NavIcon>
+      <NavIcon>
+        <span className='material-icons'>more_vert</span>
+      </NavIcon>
     </Nav>
   )
 }
 
-const Nav = styled.nav`
+const Nav = styled.nav<{ visible: boolean }>`
   display: flex;
-  /* background-color: ${props => props.theme.colors.primaryColor}; */
+  padding: 1rem;
+  align-items: center;
+  justify-content: space-evenly;
+  position: fixed;
+  width: calc(100% - 2rem);
+  background-color: ${props => props.theme.colors.backgroundColor};
+  transform: translateY(${props => (props.visible ? '0' : '-100px')});
+  transition: all 0.2s ease-in-out;
 `
+const NavIcon = styled.div`
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 3rem;
+  height: 3rem;
+  transition: all 0.2s ease-in-out;
 
-const Brand = styled.h1``
+  span {
+    font-weight: 300;
+    font-size: 2.5rem;
+  }
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+`

@@ -2,13 +2,34 @@ import React from 'react'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 
+interface PostData {
+  data: {
+    author: string
+    created_utc: string
+    domain: string
+    link_flair_text: string
+    num_comments: string
+    preview: {
+      images: {
+        source: {
+          url: string
+        }
+      }[]
+    }
+    score: string
+    selftext: string
+    subreddit: string
+    stickied: string
+    thumbnail: string
+    title: string
+  }
+}
+
 interface SubredditPostProps {
-  post: any
+  post: PostData
 }
 
 export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
-  console.log(post)
-
   const {
     data: {
       author,

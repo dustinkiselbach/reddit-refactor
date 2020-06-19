@@ -11,6 +11,7 @@ export type State = {
   tryTest?: () => void
   getPosts?: () => Promise<any>
   setSubreddit?: (subreddit: string | null) => void
+  setLoading?: () => void
 }
 
 type ActionInterface<T extends string, U> = {
@@ -22,3 +23,4 @@ export type AllActions =
   | ActionInterface<'TEST_TYPE', null>
   | ActionInterface<'GET_POSTS', []>
   | ActionInterface<'SET_SUBREDDIT', string | null>
+  | ActionInterface<'SET_LOADING', null>
