@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 import { Ripple } from '../layout/Ripple'
+import { getPostType, getMedia } from '../../utils/subredditParser'
 
 interface PostData {
   data: {
@@ -16,10 +17,12 @@ interface PostData {
           url: string
         }
       }[]
+      reddit_video_preview: any
     }
     post_hint: string
     score: string
     selftext: string
+    secure_media: any
     subreddit: string
     stickied: string
     thumbnail: string
@@ -32,6 +35,14 @@ interface SubredditPostProps {
   post: PostData
 }
 
+// preview:
+// enabled: false
+// images: [{…}]
+// reddit_video_preview:
+// dash_url: "https://v.redd.it/xomset54bx551/DASHPlaylist.mpd"
+// duration: 11
+// fallback_url: "https://v.redd.it/xomset54bx551/DASH_720"
+
 export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
   const [clicked, setClicked] = useState(false)
 
@@ -43,12 +54,10 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
       link_flair_text,
       num_comments,
       preview,
-      post_hint,
       score,
       selftext,
       subreddit,
       stickied,
-      thumbnail,
       title,
       url
     }
@@ -59,21 +68,38 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
     setClicked(!clicked)
   }
 
+  const type = getPostType(post.data)
+  const media = getMedia(post.data, type)
+
   return (
     <Post>
       {clicked && (
-        <PicDetail onClick={onClick} thumbnail={preview.images[0].source.url} />
+        <PicDetail onClick={onClick} thumbnail={media}>
+          {type.split(':')[0] === 'video' && (
+            <video
+              src={media}
+              width='100%'
+              height='100%'
+              playsInline={true}
+              loop
+              autoPlay={true}
+            />
+          )}
+        </PicDetail>
       )}
       {/* this is image preview if is a gif video or article with preview */}
       <PostPreview>
-        {thumbnail !== 'self' && preview && (
+        {type !== 'self' && preview && (
           <PreviewImage
             onClick={onClick}
             thumbnail={preview.images[0].source.url}
           >
-            {post_hint === 'link' && (
+            {(type === 'link:preview' || type === 'link:video') && (
               <div>
-                <a href={url}>{url}</a>
+                <span>{domain}</span>
+                <a href={url} target='_blank' rel='noopener noreferrer'>
+                  {url}
+                </a>
               </div>
             )}
           </PreviewImage>
@@ -99,8 +125,8 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
           </PostTitleLabel>
         </PostTitle>
         {/* // text only link*/}
-        {!preview && selftext.length === 0 && (
-          <PreviewLink href={url}>
+        {type === 'link' && (
+          <PreviewLink href={url} target='_blank' rel='noopener noreferrer'>
             <span className='material-icons'>open_in_browser</span>
             <div>
               <h5>{domain}</h5>
@@ -110,7 +136,7 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
         )}
 
         {/* if this is a self post you need to show this on the post preview */}
-        {selftext.length > 0 && (
+        {type === 'self' && (
           <PreviewText>{selftext.split('\n')[0]}</PreviewText>
         )}
 
@@ -143,9 +169,21 @@ const PreviewImage = styled.div<{ thumbnail: string }>`
   justify-content: flex-end;
 
   div {
-    padding: 0.5rem;
+    width: 100%;
+
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    span {
+      display: inline-block;
+      padding: 0.5rem;
+    }
+    a {
+      padding: 0.5rem;
+      display: inline-block;
+      overflow: hidden;
+    }
   }
 `
 
