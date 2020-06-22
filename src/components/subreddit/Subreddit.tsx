@@ -44,6 +44,6 @@ export const Subreddit: React.FC<SubredditProps> = ({ match }) => {
 const Container = styled.div`
   padding: 1rem;
   &:first-child {
-    padding-top: 5rem;
+    padding-top: 5.5rem;
   }
 `

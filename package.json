@@ -15,6 +15,7 @@
     "@types/styled-components": "^5.1.0",
     "@types/uuid": "^8.0.0",
     "axios": "^0.19.2",
+    "framer-motion": "^1.11.1",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.31",
     "react": "^16.13.1",

@@ -9,6 +9,8 @@ declare module 'styled-components' {
       textColor: string
       primaryColor: string
       secondaryColor: string
+      subMenuColor: string
+      navActive: string
     }
   }
 }

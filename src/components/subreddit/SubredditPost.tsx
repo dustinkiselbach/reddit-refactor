@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, MouseEvent } from 'react'
 import styled from 'styled-components'
 import Moment from 'react-moment'
-import { Ripple } from '../layout/Ripple'
 import { getPostType, getMedia } from '../../utils/subredditParser'
+import { Loading } from '../layout/Loading'
+
+import { motion, AnimatePresence } from 'framer-motion'
+import { customEase } from '../../utils/customEase'
 
 interface PostData {
   data: {
@@ -35,16 +38,10 @@ interface SubredditPostProps {
   post: PostData
 }
 
-// preview:
-// enabled: false
-// images: [{…}]
-// reddit_video_preview:
-// dash_url: "https://v.redd.it/xomset54bx551/DASHPlaylist.mpd"
-// duration: 11
-// fallback_url: "https://v.redd.it/xomset54bx551/DASH_720"
-
 export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
   const [clicked, setClicked] = useState(false)
+  const [gifLoading, setGifLoading] = useState(false)
+  const [animateStart, setAnimateStart] = useState(0)
 
   const {
     data: {
@@ -63,30 +60,64 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
     }
   } = post
 
-  console.log(post)
-  const onClick = () => {
-    setClicked(!clicked)
-  }
-
   const type = getPostType(post.data)
   const media = getMedia(post.data, type)
 
+  const onClick = (e: MouseEvent) => {
+    const smallMediaContainer = e.currentTarget.getBoundingClientRect()
+
+    // 300px is rougly the size of how far the start
+    // needs to move up
+    setAnimateStart(smallMediaContainer.y - 300)
+    if (document.body.style.overflow === 'hidden') {
+      document.body.style.overflow = 'scroll'
+    } else {
+      document.body.style.overflow = 'hidden'
+    }
+
+    setClicked(!clicked)
+  }
+
+  const onLoadStart = () => {
+    if (type === 'video:hosted' || type === 'video:outside') {
+      setGifLoading(true)
+    }
+  }
+
+  const onLoadEnd = () => {
+    setGifLoading(false)
+  }
+
   return (
     <Post>
-      {clicked && (
-        <PicDetail onClick={onClick} thumbnail={media}>
-          {type.split(':')[0] === 'video' && (
-            <video
-              src={media}
-              width='100%'
-              height='100%'
-              playsInline={true}
-              loop
-              autoPlay={true}
-            />
-          )}
-        </PicDetail>
-      )}
+      <AnimatePresence>
+        {clicked && (
+          <PicDetail
+            onClick={onClick}
+            thumbnail={media}
+            animate={{ y: 0, scaleY: 1, opacity: 1 }}
+            initial={{ y: animateStart, scaleY: 0.5, opacity: 0 }}
+            exit={{ y: animateStart, scaleY: 0.5, opacity: 0 }}
+            transition={{ duration: 0.2, ease: customEase }}
+          >
+            {type.split(':')[0] === 'video' && (
+              <>
+                {gifLoading ? <Loading /> : null}
+                <video
+                  src={media}
+                  width='100%'
+                  height='100%'
+                  playsInline={true}
+                  loop
+                  autoPlay={true}
+                  onLoadStart={onLoadStart}
+                  onLoadedData={onLoadEnd}
+                />
+              </>
+            )}
+          </PicDetail>
+        )}
+      </AnimatePresence>
       {/* this is image preview if is a gif video or article with preview */}
       <PostPreview>
         {type !== 'self' && preview && (
@@ -247,9 +278,10 @@ const Container = styled.div`
   font-weight: 300;
 `
 
-const PicDetail = styled.div<{ thumbnail: string }>`
+const PicDetail = styled(motion.div)<{ thumbnail: string }>`
   z-index: 2;
   position: fixed;
+
   top: 0;
   left: 0;
   height: 100vh;
