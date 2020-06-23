@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useCallback } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import RedditContext from './redditContext'
 import redditReducer from './redditReducer'
 
@@ -10,7 +10,10 @@ import {
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
   SET_LOADING,
-  CHANGE_SORT_BY
+  CHANGE_SORT_BY,
+  SET_AFTER,
+  GET_POST_DETAIL,
+  CLEAR_POST_DETAIL
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
@@ -28,7 +31,9 @@ const RedditState: React.FC<Props> = ({ children }) => {
     subreddit: null,
     defaultSubreddits: null,
     sortBy: 'hot',
-    posts: null
+    posts: [],
+    post: null,
+    after: null
   }
 
   const [state, dispatch] = useReducer(redditReducer, initialState)
@@ -37,20 +42,40 @@ const RedditState: React.FC<Props> = ({ children }) => {
     getDefaultSubreddits()
   }, [])
 
-  useEffect(() => {
-    getPosts()
-  }, [state.sortBy])
-
   const getPosts = async () => {
-    setLoading()
+    if (!state.after) {
+      setLoading()
+    }
     try {
       const res = await axios.get(
-        `https://www.reddit.com/r/${state.subreddit}/${state.sortBy}.json?raw_json=1`
+        `https://www.reddit.com/r/${state.subreddit}/${state.sortBy}.json?raw_json=1&after=${state.after}`
       )
+
+      console.log(res)
 
       dispatch({
         type: GET_POSTS,
         payload: res.data.data.children
+      })
+
+      dispatch({
+        type: SET_AFTER,
+        payload: res.data.data.after
+      })
+    } catch (err) {
+      throw err
+    }
+  }
+
+  const getPostDetail = async (permalink: string, name: string) => {
+    try {
+      const res = await axios.get(
+        `https://www.reddit.com/r/${permalink}.json?raw_json=1`
+      )
+
+      dispatch({
+        type: GET_POST_DETAIL,
+        payload: { name, comments: res.data[1].data.children }
       })
     } catch (err) {
       throw err
@@ -62,8 +87,6 @@ const RedditState: React.FC<Props> = ({ children }) => {
       const res = await axios.get(
         'https://www.reddit.com/subreddits/default.json'
       )
-
-      console.log(res)
 
       dispatch({
         type: GET_DEFAULT_SUBREDDITS,
@@ -87,6 +110,10 @@ const RedditState: React.FC<Props> = ({ children }) => {
   //   }
   // }
 
+  const clearPostDetail = () => {
+    dispatch({ type: CLEAR_POST_DETAIL, payload: null })
+  }
+
   const setSubreddit = (subreddit: string | null) => {
     dispatch({ type: SET_SUBREDDIT, payload: subreddit })
   }
@@ -109,10 +136,14 @@ const RedditState: React.FC<Props> = ({ children }) => {
         subreddit: state.subreddit,
         defaultSubreddits: state.defaultSubreddits,
         posts: state.posts,
+        post: state.post,
         sortBy: state.sortBy,
         loading: state.loading,
+        after: state.after,
         tryTest,
         getPosts,
+        getPostDetail,
+        clearPostDetail,
         setSubreddit,
         changeSortBy
       }}

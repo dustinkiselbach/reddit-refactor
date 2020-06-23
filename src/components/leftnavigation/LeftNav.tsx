@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { DefaultSubreddit } from '../../context/reddit/redditTypes'
 import { motion } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
-import { TextField } from '../common/TextField'
+
 import { LeftNavSearch } from './LeftNavSearch'
 
 interface LeftNavProps {

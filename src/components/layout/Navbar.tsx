@@ -4,23 +4,26 @@ import RedditContext from '../../context/reddit/redditContext'
 import { SubNav } from './SubNav'
 import { AnimatePresence } from 'framer-motion'
 import { LeftNav } from '../leftnavigation/LeftNav'
+import { useHistory } from 'react-router-dom'
 
 interface Props {
   setTheme: React.Dispatch<string>
   theme: string
 }
 
-export const Navbar: React.FC<Props> = ({ setTheme, theme }) => {
+export const Navbar: React.FC<Props> = () => {
   const [prevScrollPos, setScrollPos] = useState(window.pageYOffset)
   const [visible, setVisible] = useState(true)
   const [showSort, setShowSort] = useState(false)
   const [showLeft, setShowLeft] = useState(true)
+  let history = useHistory()
 
   const redditContext = useContext(RedditContext)
   const {
     subreddit,
     sortBy,
     defaultSubreddits,
+    post,
     getPosts,
     changeSortBy,
     setSubreddit
@@ -41,6 +44,22 @@ export const Navbar: React.FC<Props> = ({ setTheme, theme }) => {
     setVisible(visible)
   }
 
+  let leftButton
+
+  if (post) {
+    leftButton = (
+      <NavIcon onClick={() => history.goBack()}>
+        <span className='material-icons'>arrow_back</span>
+      </NavIcon>
+    )
+  } else {
+    leftButton = (
+      <NavIcon onClick={() => setShowLeft(true)}>
+        <span className='material-icons'>menu</span>
+      </NavIcon>
+    )
+  }
+
   return (
     <>
       <AnimatePresence>
@@ -53,9 +72,7 @@ export const Navbar: React.FC<Props> = ({ setTheme, theme }) => {
         )}
       </AnimatePresence>
       <Nav visible={visible}>
-        <NavIcon onClick={() => setShowLeft(true)}>
-          <span className='material-icons'>menu</span>
-        </NavIcon>
+        {leftButton}
         <div>
           <h2>{subreddit}</h2>
           <label>{sortBy}</label>

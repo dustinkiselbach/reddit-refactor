@@ -10,6 +10,7 @@ import { darkTheme, lightTheme } from './themes/my-theme'
 
 import { Navbar } from './components/layout/Navbar'
 import { Subreddit } from './components/subreddit/Subreddit'
+import { Post } from './components/post/Post'
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState('dark')
@@ -20,10 +21,15 @@ const App: React.FC = () => {
         <RedditState>
           <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
             <GlobalStyle />
-            <Navbar setTheme={setTheme} theme={theme} />
             <Router>
+              <Navbar setTheme={setTheme} theme={theme} />
               <Switch>
-                <Route exact path='/r/:subreddit' component={Subreddit} />
+                <Route exact path='/' component={Subreddit} />
+                <Route
+                  exact
+                  path='/r/:subreddit/comments/:id/:title/:name'
+                  component={Post}
+                />
               </Switch>
             </Router>
           </ThemeProvider>

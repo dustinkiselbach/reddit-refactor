@@ -1,24 +1,46 @@
 import React, { useEffect, useContext } from 'react'
-import { RouteComponentProps } from 'react-router-dom'
+
 import RedditContext from '../../context/reddit/redditContext'
 
 import styled from 'styled-components'
 import { SubredditPost } from './SubredditPost'
 import { Loading } from '../layout/Loading'
 
-interface SubredditProps extends RouteComponentProps<{ subreddit: string }> {}
+import { useInView } from 'react-intersection-observer'
+import { PostData } from '../../context/reddit/redditTypes'
+import { NoMorePosts } from './NoMorePosts'
+import { GettingMorePosts } from './GettingMorePosts'
+import { PageIndicator } from './PageIndicator'
 
-export const Subreddit: React.FC<SubredditProps> = ({ match }) => {
+export const Subreddit: React.FC = () => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    rootMargin: '400px 0px'
+  })
+
   const redditContext = useContext(RedditContext)
-  const { posts, subreddit, loading, setSubreddit, getPosts } = redditContext
+  const { after, posts, subreddit, loading, sortBy, getPosts } = redditContext
+
+  //   useEffect(() => {
+  //     setSubreddit!(match.params.subreddit)
+  //     console.log('from 1')
+
+  //     return () => {
+  //       console.log('left')
+  //     }
+  //   }, [])
 
   useEffect(() => {
-    setSubreddit!(match.params.subreddit)
-  }, [])
+    if (subreddit) {
+      getPosts!()
+    }
+  }, [subreddit, sortBy])
 
   useEffect(() => {
-    getPosts!()
-  }, [subreddit])
+    if (inView && after) {
+      getPosts!()
+    }
+  }, [inView])
 
   return (
     <>
@@ -27,13 +49,22 @@ export const Subreddit: React.FC<SubredditProps> = ({ match }) => {
       ) : (
         <section className='posts'>
           <Container>
-            {posts && (
+            {posts && posts.length > 0 && (
               <>
-                {posts.map((post, index) => (
-                  <SubredditPost post={post} key={index} />
+                {posts.map((grouping, index) => (
+                  <React.Fragment key={index}>
+                    {index !== 0 && <PageIndicator index={index} />}
+                    {grouping.map((post: PostData, index: number) => (
+                      <React.Fragment key={index}>
+                        <SubredditPost post={post} />
+                      </React.Fragment>
+                    ))}
+                    <div ref={ref} />
+                  </React.Fragment>
                 ))}
               </>
             )}
+            {!after ? <NoMorePosts /> : <GettingMorePosts />}
           </Container>
         </section>
       )}
@@ -42,8 +73,5 @@ export const Subreddit: React.FC<SubredditProps> = ({ match }) => {
 }
 
 const Container = styled.div`
-  padding: 1rem;
-  &:first-child {
-    padding-top: 5.5rem;
-  }
+  padding: 6rem 1rem 1rem 1rem;
 `

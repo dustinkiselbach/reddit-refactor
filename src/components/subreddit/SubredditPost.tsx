@@ -1,38 +1,13 @@
 import React, { useState, MouseEvent } from 'react'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 import Moment from 'react-moment'
 import { getPostType, getMedia } from '../../utils/subredditParser'
 import { Loading } from '../layout/Loading'
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
-
-interface PostData {
-  data: {
-    author: string
-    created_utc: string
-    domain: string
-    link_flair_text: string
-    num_comments: string
-    preview: {
-      images: {
-        source: {
-          url: string
-        }
-      }[]
-      reddit_video_preview: any
-    }
-    post_hint: string
-    score: string
-    selftext: string
-    secure_media: any
-    subreddit: string
-    stickied: string
-    thumbnail: string
-    title: string
-    url: string
-  }
-}
+import { PostData } from '../../context/reddit/redditTypes'
 
 interface SubredditPostProps {
   post: PostData
@@ -49,8 +24,10 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
       created_utc,
       domain,
       link_flair_text,
+      name,
       num_comments,
       preview,
+      permalink,
       score,
       selftext,
       subreddit,
@@ -138,7 +115,9 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
       </PostPreview>
       <Container>
         <PostTitle stickied={stickied ? true : false}>
-          <h2>{title}</h2>
+          <h2>
+            <Link to={`${permalink}${name}`}>{title}</Link>
+          </h2>
           <PostTitleLabel>
             {link_flair_text && (
               <>
