@@ -254,7 +254,7 @@ const PostTitle = styled.div<{ stickied: boolean }>`
 `
 
 const PostTitleLabel = styled.label`
-  color: rgba(255, 255, 255, 0.6);
+  color: ${props => props.theme.colors.textColorFaded};
 `
 
 const PostTitleFlair = styled.span`
@@ -267,7 +267,7 @@ const PostTitleSubreddit = styled.span`
 `
 
 const PostFooter = styled.div`
-  color: rgba(255, 255, 255, 0.6);
+  color: ${props => props.theme.colors.textColorFaded};
   ul {
     padding: 1rem 0;
   }

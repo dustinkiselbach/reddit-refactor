@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { DefaultSubreddit } from '../../context/reddit/redditTypes'
 import { motion } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
+import { TextField } from '../common/TextField'
+import { LeftNavSearch } from './LeftNavSearch'
 
 interface LeftNavProps {
   defaultSubreddits: DefaultSubreddit[]
@@ -18,15 +20,29 @@ export const LeftNav: React.FC<LeftNavProps> = ({
   setSubreddit,
   setShowLeft
 }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = 'scroll'
+    }
+  }, [])
+
   return (
     <LeftNavMenu
-      onClick={() => setShowLeft(false)}
       animate={{ x: 0 }}
       initial={{ x: -500 }}
       exit={{ x: -500 }}
       transition={{ duration: 0.2, ease: customEase }}
     >
-      <SubredditsList>
+      <SearchContainer>
+        <LeftNavSearch
+          placeholder='View subreddit'
+          setSubreddit={setSubreddit}
+          setShowLeft={setShowLeft}
+        />
+      </SearchContainer>
+      <SubredditsList onClick={() => setShowLeft(false)}>
         {defaultSubreddits.map(subreddit => (
           <SubredditItem
             key={subreddit.name}
@@ -45,7 +61,7 @@ export const LeftNav: React.FC<LeftNavProps> = ({
 
 const LeftNavMenu = styled(motion.div)`
   background-color: ${props => props.theme.colors.backgroundColor};
-  position: absolute;
+  position: fixed;
   width: 80%;
   height: 100%;
   z-index: 4;
@@ -88,8 +104,13 @@ const SubredditIcon = styled.div<{ icon: string }>`
   background-position: center;
   border-radius: 100%;
 
-  width: 5rem;
-  height: 5rem;
+  width: 2.5rem;
+  height: 2.5rem;
 
   margin: 1rem;
+`
+const SearchContainer = styled.div`
+  padding: 1rem;
+  display: flex;
+  align-items: center;
 `

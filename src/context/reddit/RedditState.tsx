@@ -74,6 +74,19 @@ const RedditState: React.FC<Props> = ({ children }) => {
     }
   }
 
+  // const searchSubreddits = async () => {
+  //   console.log('ran')
+  //   try {
+  //     const res = await axios.get(
+  //       'https://www.reddit.com/subreddits/search.json?q=gonewild&include_over_18=on'
+  //     )
+
+  //     console.log(res)
+  //   } catch (err) {
+  //     throw err
+  //   }
+  // }
+
   const setSubreddit = (subreddit: string | null) => {
     dispatch({ type: SET_SUBREDDIT, payload: subreddit })
   }
