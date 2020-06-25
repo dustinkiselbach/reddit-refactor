@@ -11,6 +11,8 @@ import { PostData } from '../../context/reddit/redditTypes'
 import { NoMorePosts } from './NoMorePosts'
 import { GettingMorePosts } from './GettingMorePosts'
 import { PageIndicator } from './PageIndicator'
+import { motion } from 'framer-motion'
+import { parentVariants } from '../../utils/variants'
 
 export const Subreddit: React.FC = () => {
   const [ref, inView] = useInView({
@@ -30,10 +32,12 @@ export const Subreddit: React.FC = () => {
   //     }
   //   }, [])
 
+  // TODO fix this second page onward will load new posts
   useEffect(() => {
-    if (subreddit) {
+    if (subreddit && !after) {
       getPosts!()
     }
+    console.log('getting')
   }, [subreddit, sortBy])
 
   useEffect(() => {
@@ -48,7 +52,11 @@ export const Subreddit: React.FC = () => {
         <Loading />
       ) : (
         <section className='posts'>
-          <Container>
+          <Container
+            variants={parentVariants}
+            initial='hidden'
+            animate='visible'
+          >
             {posts && posts.length > 0 && (
               <>
                 {posts.map((grouping, index) => (
@@ -72,6 +80,6 @@ export const Subreddit: React.FC = () => {
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   padding: 6rem 1rem 1rem 1rem;
 `

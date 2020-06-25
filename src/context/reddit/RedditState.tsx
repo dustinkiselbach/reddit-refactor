@@ -9,6 +9,7 @@ import {
   TEST_TYPE,
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
+  FILTER_POST_FROM_POSTS,
   SET_LOADING,
   CHANGE_SORT_BY,
   SET_AFTER,
@@ -33,6 +34,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
     sortBy: 'hot',
     posts: [],
     post: null,
+    comments: null,
     after: null
   }
 
@@ -67,7 +69,12 @@ const RedditState: React.FC<Props> = ({ children }) => {
     }
   }
 
+  const filterPostFromPosts = (name: string) => {
+    dispatch({ type: FILTER_POST_FROM_POSTS, payload: name })
+  }
+
   const getPostDetail = async (permalink: string, name: string) => {
+    filterPostFromPosts(name)
     try {
       const res = await axios.get(
         `https://www.reddit.com/r/${permalink}.json?raw_json=1`
@@ -75,7 +82,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
 
       dispatch({
         type: GET_POST_DETAIL,
-        payload: { name, comments: res.data[1].data.children }
+        payload: res.data[1].data.children
       })
     } catch (err) {
       throw err
@@ -137,6 +144,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
         defaultSubreddits: state.defaultSubreddits,
         posts: state.posts,
         post: state.post,
+        comments: state.comments,
         sortBy: state.sortBy,
         loading: state.loading,
         after: state.after,

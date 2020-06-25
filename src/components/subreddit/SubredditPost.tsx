@@ -8,6 +8,7 @@ import { Loading } from '../layout/Loading'
 import { motion, AnimatePresence } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
 import { PostData } from '../../context/reddit/redditTypes'
+import { childVariants } from '../../utils/variants'
 
 interface SubredditPostProps {
   post: PostData
@@ -66,7 +67,10 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
   }
 
   return (
-    <Post>
+    <Post
+      variants={childVariants}
+      transition={{ duration: 0.2, ease: customEase }}
+    >
       <AnimatePresence>
         {clicked && (
           <PicDetail
@@ -161,7 +165,7 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
   )
 }
 
-const Post = styled.div`
+const Post = styled(motion.div)`
   margin: 0.5rem 0;
   position: relative;
   overflow: hidden;

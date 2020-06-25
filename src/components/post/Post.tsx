@@ -4,6 +4,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import RedditContext from '../../context/reddit/redditContext'
 import { SubredditPost } from '../subreddit/SubredditPost'
 import { Comments } from './Comments'
+import { motion } from 'framer-motion'
+import { parentVariants } from '../../utils/variants'
 
 interface PostProps
   extends RouteComponentProps<{
@@ -18,7 +20,7 @@ export const Post: React.FC<PostProps> = ({ match }) => {
     params: { subreddit, id, title, name }
   } = match
   const redditContext = useContext(RedditContext)
-  const { post, clearPostDetail, getPostDetail } = redditContext
+  const { post, comments, clearPostDetail, getPostDetail } = redditContext
 
   useEffect(() => {
     getPostDetail!(`${subreddit}/comments/${id}/${title}`, name)
@@ -31,17 +33,21 @@ export const Post: React.FC<PostProps> = ({ match }) => {
   console.log(post)
 
   return (
-    <Container>
+    <Container variants={parentVariants} initial='hidden' animate='visible'>
       {post && (
         <>
-          <SubredditPost post={post.info} />
-          <Comments comments={post.comments} />
+          <SubredditPost post={post} />
+        </>
+      )}
+      {comments && (
+        <>
+          <Comments comments={comments} />
         </>
       )}
     </Container>
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   padding: 6rem 1rem 1rem 1rem;
 `

@@ -3,10 +3,10 @@
 
 interface PostData {
   author: string
-  created_utc: string
+  created_utc: number
   domain: string
   link_flair_text: string
-  num_comments: string
+  num_comments: number
   preview: {
     images: {
       source: {
@@ -16,7 +16,7 @@ interface PostData {
     reddit_video_preview: any
   }
   post_hint?: string
-  score: string
+  score: number
   selftext: string
   secure_media?: any
   subreddit: string

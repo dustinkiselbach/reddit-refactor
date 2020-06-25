@@ -7,7 +7,8 @@ import {
   CHANGE_SORT_BY,
   SET_AFTER,
   GET_POST_DETAIL,
-  CLEAR_POST_DETAIL
+  CLEAR_POST_DETAIL,
+  FILTER_POST_FROM_POSTS
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -29,20 +30,22 @@ export default (state: State, action: AllActions): State => {
     case GET_POST_DETAIL: {
       return {
         ...state,
-        post: {
-          info: state.posts!.map(postArr =>
-            postArr.filter(
-              (post: PostData) => post.data.name === action.payload.name
-            )
-          )[0][0],
-          comments: action.payload.comments
-        }
+        comments: action.payload
+      }
+    }
+    case FILTER_POST_FROM_POSTS: {
+      return {
+        ...state,
+        post: state.posts!.map(postArr =>
+          postArr.filter((post: PostData) => post.data.name === action.payload)
+        )[0][0]
       }
     }
     case CLEAR_POST_DETAIL: {
       return {
         ...state,
-        post: null
+        post: null,
+        comments: null
       }
     }
     case SET_SUBREDDIT: {

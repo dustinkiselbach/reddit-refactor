@@ -5,11 +5,11 @@ export interface Props {
 export interface PostData {
   data: {
     author: string
-    created_utc: string
+    created_utc: number
     domain: string
     link_flair_text: string
     name: string
-    num_comments: string
+    num_comments: number
     preview: {
       images: {
         source: {
@@ -20,7 +20,7 @@ export interface PostData {
     }
     permalink: string
     post_hint: string
-    score: string
+    score: number
     selftext: string
     secure_media: any
     subreddit: string
@@ -34,11 +34,19 @@ export interface PostData {
 export interface CommentData {
   data: {
     author: string
+    author_flair_text: string | null
     body: string
-    created_utc: string
+    body_html: string
+    children: CommentData[] | string
+    created_utc: number
+    distinguished: string | null
+    is_submitter: boolean
     replies: CommentData | string
-    score: string
+    score: number
+    score_hidden: boolean
+    stickied: boolean
   }
+  kind: string
 }
 
 export type State = {
@@ -46,7 +54,8 @@ export type State = {
   subreddit?: null | string
   sortBy?: string
   posts?: PostData[][]
-  post?: { info: PostData; comments: CommentData[] } | null
+  post?: PostData | null
+  comments?: CommentData[] | null
   defaultSubreddits?: null | DefaultSubreddit[]
   after?: string | null
   clearPostDetail?: () => void
@@ -68,10 +77,11 @@ export type DefaultSubreddit = { name: string; icon: string }
 export type AllActions =
   | ActionInterface<'TEST_TYPE', null>
   | ActionInterface<'GET_POSTS', []>
-  | ActionInterface<'GET_POST_DETAIL', { name: string; comments: any }>
+  | ActionInterface<'GET_POST_DETAIL', any>
   | ActionInterface<'SET_SUBREDDIT', string | null>
   | ActionInterface<'SET_LOADING', null>
   | ActionInterface<'CHANGE_SORT_BY', string>
   | ActionInterface<'GET_DEFAULT_SUBREDDITS', DefaultSubreddit[]>
   | ActionInterface<'SET_AFTER', string | null>
   | ActionInterface<'CLEAR_POST_DETAIL', null>
+  | ActionInterface<'FILTER_POST_FROM_POSTS', string>
