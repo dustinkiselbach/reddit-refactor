@@ -23,10 +23,12 @@ export const Navbar: React.FC<Props> = () => {
     subreddit,
     sortBy,
     defaultSubreddits,
+    autocompleteSubreddits,
     post,
     getPosts,
     changeSortBy,
-    setSubreddit
+    setSubreddit,
+    subredditAutocomplete
   } = redditContext
 
   useEffect(() => {
@@ -66,8 +68,10 @@ export const Navbar: React.FC<Props> = () => {
         {showLeft && defaultSubreddits && (
           <LeftNav
             defaultSubreddits={defaultSubreddits}
+            autocompleteSubreddits={autocompleteSubreddits}
             setSubreddit={setSubreddit!}
             setShowLeft={setShowLeft}
+            subredditAutocomplete={subredditAutocomplete!}
           />
         )}
       </AnimatePresence>

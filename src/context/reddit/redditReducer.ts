@@ -8,7 +8,8 @@ import {
   SET_AFTER,
   GET_POST_DETAIL,
   CLEAR_POST_DETAIL,
-  FILTER_POST_FROM_POSTS
+  FILTER_POST_FROM_POSTS,
+  SUBREDDIT_AUTOCOMPLETE
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -38,7 +39,7 @@ export default (state: State, action: AllActions): State => {
         ...state,
         post: state.posts!.map(postArr =>
           postArr.filter((post: PostData) => post.data.name === action.payload)
-        )[0][0]
+        )[state.posts!.length - 1][0]
       }
     }
     case CLEAR_POST_DETAIL: {
@@ -60,6 +61,12 @@ export default (state: State, action: AllActions): State => {
       return {
         ...state,
         defaultSubreddits: action.payload
+      }
+    }
+    case SUBREDDIT_AUTOCOMPLETE: {
+      return {
+        ...state,
+        autocompleteSubreddits: action.payload
       }
     }
     case CHANGE_SORT_BY: {

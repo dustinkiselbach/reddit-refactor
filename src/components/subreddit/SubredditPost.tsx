@@ -12,9 +12,13 @@ import { childVariants } from '../../utils/variants'
 
 interface SubredditPostProps {
   post: PostData
+  detail?: boolean
 }
 
-export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
+export const SubredditPost: React.FC<SubredditPostProps> = ({
+  post,
+  detail
+}) => {
   const [clicked, setClicked] = useState(false)
   const [gifLoading, setGifLoading] = useState(false)
   const [animateStart, setAnimateStart] = useState(0)
@@ -31,6 +35,7 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
       permalink,
       score,
       selftext,
+      selftext_html,
       subreddit,
       stickied,
       title,
@@ -151,7 +156,13 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({ post }) => {
 
         {/* if this is a self post you need to show this on the post preview */}
         {type === 'self' && (
-          <PreviewText>{selftext.split('\n')[0]}</PreviewText>
+          <>
+            {detail ? (
+              <div dangerouslySetInnerHTML={{ __html: selftext_html }} />
+            ) : (
+              <PreviewText>{selftext.split('\n')[0]}</PreviewText>
+            )}
+          </>
         )}
 
         <PostFooter>

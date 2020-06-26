@@ -22,6 +22,7 @@ export interface PostData {
     post_hint: string
     score: number
     selftext: string
+    selftext_html: string
     secure_media: any
     subreddit: string
     stickied: string
@@ -46,7 +47,19 @@ export interface CommentData {
     score_hidden: boolean
     stickied: boolean
   }
-  kind: string
+  kind: 't1'
+}
+
+export interface CommentMore {
+  data: {
+    children: string[]
+    count: number
+    depth: number
+    id: string
+    name: string
+    parent_id: string
+  }
+  kind: 'more'
 }
 
 export type State = {
@@ -57,12 +70,15 @@ export type State = {
   post?: PostData | null
   comments?: CommentData[] | null
   defaultSubreddits?: null | DefaultSubreddit[]
+  autocompleteSubreddits?: null | DefaultSubreddit[]
   after?: string | null
   clearPostDetail?: () => void
   tryTest?: () => void
   getPosts?: () => Promise<any>
   getPostDetail?: (permalink: string, name: string) => void
+  getMoreComments?: (linkId: string, children: string[]) => Promise<any>
   setSubreddit?: (subreddit: string | null) => void
+  subredditAutocomplete?: (query: string) => void
   changeSortBy?: (sortBy: string) => void
   setLoading?: () => void
 }
@@ -85,3 +101,4 @@ export type AllActions =
   | ActionInterface<'SET_AFTER', string | null>
   | ActionInterface<'CLEAR_POST_DETAIL', null>
   | ActionInterface<'FILTER_POST_FROM_POSTS', string>
+  | ActionInterface<'SUBREDDIT_AUTOCOMPLETE', DefaultSubreddit[] | null>

@@ -1,12 +1,12 @@
 export const parentVariants = {
   hidden: {
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.04
     }
   },
   visible: {
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.04
     }
   }
 }

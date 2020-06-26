@@ -20,7 +20,13 @@ export const Post: React.FC<PostProps> = ({ match }) => {
     params: { subreddit, id, title, name }
   } = match
   const redditContext = useContext(RedditContext)
-  const { post, comments, clearPostDetail, getPostDetail } = redditContext
+  const {
+    post,
+    comments,
+    clearPostDetail,
+    getPostDetail,
+    getMoreComments
+  } = redditContext
 
   useEffect(() => {
     getPostDetail!(`${subreddit}/comments/${id}/${title}`, name)
@@ -30,18 +36,26 @@ export const Post: React.FC<PostProps> = ({ match }) => {
     }
   }, [])
 
-  console.log(post)
-
   return (
-    <Container variants={parentVariants} initial='hidden' animate='visible'>
+    <Container>
       {post && (
         <>
-          <SubredditPost post={post} />
+          <SubredditPost post={post} detail={true} />
         </>
       )}
       {comments && (
         <>
-          <Comments comments={comments} />
+          <CommentsContainer
+            variants={parentVariants}
+            initial='hidden'
+            animate='visible'
+          >
+            <Comments
+              comments={comments}
+              getMoreComments={getMoreComments!}
+              postName={name}
+            />
+          </CommentsContainer>
         </>
       )}
     </Container>
@@ -51,3 +65,4 @@ export const Post: React.FC<PostProps> = ({ match }) => {
 const Container = styled(motion.div)`
   padding: 6rem 1rem 1rem 1rem;
 `
+const CommentsContainer = styled(motion.div)``

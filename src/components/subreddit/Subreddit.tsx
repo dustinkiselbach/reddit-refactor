@@ -34,10 +34,9 @@ export const Subreddit: React.FC = () => {
 
   // TODO fix this second page onward will load new posts
   useEffect(() => {
-    if (subreddit && !after) {
+    if (subreddit && posts?.length === 0) {
       getPosts!()
     }
-    console.log('getting')
   }, [subreddit, sortBy])
 
   useEffect(() => {

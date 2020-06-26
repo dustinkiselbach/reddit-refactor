@@ -6,17 +6,20 @@ interface LeftNavSearchProps {
   placeholder: string
   setSubreddit: (subreddit: string | null) => void
   setShowLeft: React.Dispatch<boolean>
+  subredditAutocomplete: (query: string) => void
 }
 
 export const LeftNavSearch: React.FC<LeftNavSearchProps> = ({
   placeholder,
   setSubreddit,
-  setShowLeft
+  setShowLeft,
+  subredditAutocomplete
 }) => {
   const [field, setField] = useState('')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setField(e.target.value)
+    subredditAutocomplete(e.target.value)
   }
 
   const onSubmit = () => {
@@ -29,7 +32,13 @@ export const LeftNavSearch: React.FC<LeftNavSearchProps> = ({
       <TextField placeholder={placeholder} onChange={onChange} value={field} />
       {field.length > 0 && (
         <>
-          <Icon className='material-icons' onClick={() => setField('')}>
+          <Icon
+            className='material-icons'
+            onClick={() => {
+              setField('')
+              subredditAutocomplete('')
+            }}
+          >
             close
           </Icon>
           <SubmitButton onClick={onSubmit}>Go</SubmitButton>

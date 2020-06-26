@@ -8,8 +8,10 @@ import { LeftNavSearch } from './LeftNavSearch'
 
 interface LeftNavProps {
   defaultSubreddits: DefaultSubreddit[]
+  autocompleteSubreddits?: DefaultSubreddit[] | null
   setSubreddit: (subreddit: string | null) => void
   setShowLeft: React.Dispatch<boolean>
+  subredditAutocomplete: (query: string) => void
 }
 
 const fallbackIconUrl =
@@ -17,8 +19,10 @@ const fallbackIconUrl =
 
 export const LeftNav: React.FC<LeftNavProps> = ({
   defaultSubreddits,
+  autocompleteSubreddits,
   setSubreddit,
-  setShowLeft
+  setShowLeft,
+  subredditAutocomplete
 }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -40,20 +44,48 @@ export const LeftNav: React.FC<LeftNavProps> = ({
           placeholder='View subreddit'
           setSubreddit={setSubreddit}
           setShowLeft={setShowLeft}
+          subredditAutocomplete={subredditAutocomplete}
         />
       </SearchContainer>
-      <SubredditsList onClick={() => setShowLeft(false)}>
-        {defaultSubreddits.map(subreddit => (
-          <SubredditItem
-            key={subreddit.name}
-            onClick={() => setSubreddit(subreddit.name)}
-          >
-            <SubredditIcon
-              icon={subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl}
-            />
-            <h4>{subreddit.name}</h4>
-          </SubredditItem>
-        ))}
+      <SubredditsList
+        onClick={() => {
+          setShowLeft(false)
+          subredditAutocomplete('')
+        }}
+      >
+        {autocompleteSubreddits ? (
+          <>
+            {autocompleteSubreddits.map(subreddit => (
+              <SubredditItem
+                key={subreddit.name}
+                onClick={() => setSubreddit(subreddit.name)}
+              >
+                <SubredditIcon
+                  icon={
+                    subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
+                  }
+                />
+                <h4>{subreddit.name}</h4>
+              </SubredditItem>
+            ))}
+          </>
+        ) : (
+          <>
+            {defaultSubreddits.map(subreddit => (
+              <SubredditItem
+                key={subreddit.name}
+                onClick={() => setSubreddit(subreddit.name)}
+              >
+                <SubredditIcon
+                  icon={
+                    subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
+                  }
+                />
+                <h4>{subreddit.name}</h4>
+              </SubredditItem>
+            ))}
+          </>
+        )}
       </SubredditsList>
     </LeftNavMenu>
   )
