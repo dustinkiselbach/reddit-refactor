@@ -6,10 +6,12 @@ import Moment from 'react-moment'
 import { motion } from 'framer-motion'
 import { childVariants } from '../../utils/variants'
 import { customEase } from '../../utils/customEase'
+import { decodeHTML } from '../../utils/decodeHtml'
 
 interface CommentProps {
   comment: CommentData | CommentMore
   number: number
+  more?: boolean
   postName: string
   getMoreComments: (linkId: string, children: string[]) => Promise<any>
 }
@@ -22,6 +24,7 @@ const colors = ['#de3e49', '#3e56de', '#d433ce', '#33d453', '#ed683b']
 export const Comment: React.FC<CommentProps> = ({
   comment,
   number,
+  more,
   postName,
   getMoreComments
 }) => {
@@ -90,7 +93,13 @@ export const Comment: React.FC<CommentProps> = ({
                 </Moment>
               </CommentMetaItem>
             </CommentMeta>
-            <div dangerouslySetInnerHTML={{ __html: body_html }}></div>
+            <div
+              dangerouslySetInnerHTML={
+                !more
+                  ? { __html: body_html }
+                  : { __html: decodeHTML(body_html) }
+              }
+            ></div>
           </CommentItem>
         </CommentContainer>
         {/* recursivly calling replies */}
@@ -106,28 +115,47 @@ export const Comment: React.FC<CommentProps> = ({
     )
   } else {
     const {
-      data: { count, children }
+      data: { count, children, id }
     } = comment
+
+    if (id === '_') {
+      return null
+    }
 
     return (
       <>
-        <CommentContainer
-          variants={childVariants}
-          transition={{ duration: 0.2, ease: customEase }}
-          style={{ marginLeft: number * 2 }}
-          labelColor={
-            number === 0 ? 'transparent' : colors[number % colors.length]
-          }
-          more={true}
-          onClick={() => fart(children)}
-        >
-          {loadMore ? (
-            <CommentItem>Loading... </CommentItem>
-          ) : (
-            <CommentItem>View More ({count})</CommentItem>
-          )}
-        </CommentContainer>
-        {moreComments && moreComments.map((comments: any) => <div>fart</div>)}
+        {!moreComments ? (
+          <CommentContainer
+            variants={childVariants}
+            transition={{ duration: 0.2, ease: customEase }}
+            style={{ marginLeft: number * 2 }}
+            labelColor={
+              number === 0 ? 'transparent' : colors[number % colors.length]
+            }
+            more={true}
+            onClick={() => fart(children)}
+          >
+            {loadMore ? (
+              <CommentItem>Loading . . . </CommentItem>
+            ) : (
+              <CommentItem>View More ({count})</CommentItem>
+            )}
+          </CommentContainer>
+        ) : (
+          <>
+            {moreComments &&
+              moreComments.map((comment: CommentData, index: number) => (
+                <Comment
+                  key={index}
+                  more={true}
+                  comment={comment}
+                  number={number}
+                  postName={postName}
+                  getMoreComments={getMoreComments}
+                />
+              ))}
+          </>
+        )}
       </>
     )
   }
