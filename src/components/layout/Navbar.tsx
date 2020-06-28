@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import RedditContext from '../../context/reddit/redditContext'
 import { SubNav } from './SubNav'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { LeftNav } from '../leftnavigation/LeftNav'
 import { useHistory } from 'react-router-dom'
+import { useSwipeable } from 'react-swipeable'
 
 interface Props {
   setTheme: React.Dispatch<string>
@@ -16,6 +17,12 @@ export const Navbar: React.FC<Props> = () => {
   const [visible, setVisible] = useState(true)
   const [showSort, setShowSort] = useState(false)
   const [showLeft, setShowLeft] = useState(true)
+  const handlers = useSwipeable({
+    onSwipedLeft: () => setShowLeft(false)
+  })
+  const closedHandlers = useSwipeable({
+    onSwipedRight: () => setShowLeft(true)
+  })
   let history = useHistory()
 
   const redditContext = useContext(RedditContext)
@@ -64,15 +71,18 @@ export const Navbar: React.FC<Props> = () => {
 
   return (
     <>
+      <SwipeRight {...closedHandlers} />
       <AnimatePresence>
         {showLeft && defaultSubreddits && (
-          <LeftNav
-            defaultSubreddits={defaultSubreddits}
-            autocompleteSubreddits={autocompleteSubreddits}
-            setSubreddit={setSubreddit!}
-            setShowLeft={setShowLeft}
-            subredditAutocomplete={subredditAutocomplete!}
-          />
+          <div {...handlers}>
+            <LeftNav
+              defaultSubreddits={defaultSubreddits}
+              autocompleteSubreddits={autocompleteSubreddits}
+              setSubreddit={setSubreddit!}
+              setShowLeft={setShowLeft}
+              subredditAutocomplete={subredditAutocomplete!}
+            />
+          </div>
         )}
       </AnimatePresence>
       <Nav visible={visible}>
@@ -142,4 +152,11 @@ const NavIcon = styled.div`
   &:active {
     background-color: ${props => props.theme.colors.navActive};
   }
+`
+
+const SwipeRight = styled.div`
+  height: 100%;
+  background-color: transparent;
+  width: 5px;
+  position: fixed;
 `

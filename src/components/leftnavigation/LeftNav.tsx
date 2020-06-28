@@ -33,61 +33,69 @@ export const LeftNav: React.FC<LeftNavProps> = ({
   }, [])
 
   return (
-    <LeftNavMenu
-      animate={{ x: 0 }}
-      initial={{ x: -500 }}
-      exit={{ x: -500 }}
-      transition={{ duration: 0.2, ease: customEase }}
-    >
-      <SearchContainer>
-        <LeftNavSearch
-          placeholder='View subreddit'
-          setSubreddit={setSubreddit}
-          setShowLeft={setShowLeft}
-          subredditAutocomplete={subredditAutocomplete}
-        />
-      </SearchContainer>
-      <SubredditsList
-        onClick={() => {
-          setShowLeft(false)
-          subredditAutocomplete('')
-        }}
+    <>
+      <DarkenBackground
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4, ease: customEase }}
+      />
+      <LeftNavMenu
+        animate={{ x: 0 }}
+        initial={{ x: -500 }}
+        exit={{ x: -500 }}
+        transition={{ duration: 0.2, ease: customEase }}
       >
-        {autocompleteSubreddits ? (
-          <>
-            {autocompleteSubreddits.map(subreddit => (
-              <SubredditItem
-                key={subreddit.name}
-                onClick={() => setSubreddit(subreddit.name)}
-              >
-                <SubredditIcon
-                  icon={
-                    subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
-                  }
-                />
-                <h4>{subreddit.name}</h4>
-              </SubredditItem>
-            ))}
-          </>
-        ) : (
-          <>
-            {defaultSubreddits.map(subreddit => (
-              <SubredditItem
-                key={subreddit.name}
-                onClick={() => setSubreddit(subreddit.name)}
-              >
-                <SubredditIcon
-                  icon={
-                    subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
-                  }
-                />
-                <h4>{subreddit.name}</h4>
-              </SubredditItem>
-            ))}
-          </>
-        )}
-      </SubredditsList>
-    </LeftNavMenu>
+        <SearchContainer>
+          <LeftNavSearch
+            placeholder='View subreddit'
+            setSubreddit={setSubreddit}
+            setShowLeft={setShowLeft}
+            subredditAutocomplete={subredditAutocomplete}
+          />
+        </SearchContainer>
+        <SubredditsList
+          onClick={() => {
+            setShowLeft(false)
+            subredditAutocomplete('')
+          }}
+        >
+          {autocompleteSubreddits ? (
+            <>
+              {autocompleteSubreddits.map(subreddit => (
+                <SubredditItem
+                  key={subreddit.name}
+                  onClick={() => setSubreddit(subreddit.name)}
+                >
+                  <SubredditIcon
+                    icon={
+                      subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
+                    }
+                  />
+                  <h4>{subreddit.name}</h4>
+                </SubredditItem>
+              ))}
+            </>
+          ) : (
+            <>
+              {defaultSubreddits.map(subreddit => (
+                <SubredditItem
+                  key={subreddit.name}
+                  onClick={() => setSubreddit(subreddit.name)}
+                >
+                  <SubredditIcon
+                    icon={
+                      subreddit.icon !== '' ? subreddit.icon : fallbackIconUrl
+                    }
+                  />
+                  <h4>{subreddit.name}</h4>
+                </SubredditItem>
+              ))}
+            </>
+          )}
+        </SubredditsList>
+      </LeftNavMenu>
+    </>
   )
 }
 
@@ -145,4 +153,12 @@ const SearchContainer = styled.div`
   padding: 1rem;
   display: flex;
   align-items: center;
+`
+
+const DarkenBackground = styled(motion.div)`
+  width: 100%;
+  position: fixed;
+  height: 100%;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.5);
 `
