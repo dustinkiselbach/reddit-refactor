@@ -13,5 +13,6 @@ declare module 'styled-components' {
       subMenuColor: string
       navActive: string
     }
+    boxShadow: string
   }
 }

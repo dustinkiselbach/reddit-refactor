@@ -6,6 +6,7 @@ import { SubredditPost } from '../subreddit/SubredditPost'
 import { Comments } from './Comments'
 import { motion } from 'framer-motion'
 import { parentVariants } from '../../utils/variants'
+import { customEase } from '../../utils/customEase'
 
 interface PostProps
   extends RouteComponentProps<{
@@ -23,6 +24,7 @@ export const Post: React.FC<PostProps> = ({ match }) => {
   const {
     post,
     comments,
+    sortCommentsBy,
     clearPostDetail,
     getPostDetail,
     getMoreComments
@@ -34,10 +36,14 @@ export const Post: React.FC<PostProps> = ({ match }) => {
     return () => {
       clearPostDetail!()
     }
-  }, [])
+  }, [sortCommentsBy])
 
   return (
-    <Container>
+    <Container
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.2, ease: customEase }}
+    >
       {post && (
         <>
           <SubredditPost post={post} detail={true} />
@@ -65,4 +71,6 @@ export const Post: React.FC<PostProps> = ({ match }) => {
 const Container = styled(motion.div)`
   padding: 6rem 1rem 1rem 1rem;
 `
-const CommentsContainer = styled(motion.div)``
+const CommentsContainer = styled(motion.div)`
+  box-shadow: ${props => props.theme.boxShadow};
+`

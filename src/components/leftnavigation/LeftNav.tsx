@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { DefaultSubreddit } from '../../context/reddit/redditTypes'
 import { motion } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
 
 import { LeftNavSearch } from './LeftNavSearch'
+import { toggleTheme } from '../../redux/actions/themeActions'
+import { DarkenBackground } from '../style/basicStyles'
 
 interface LeftNavProps {
   defaultSubreddits: DefaultSubreddit[]
@@ -12,17 +15,19 @@ interface LeftNavProps {
   setSubreddit: (subreddit: string | null) => void
   setShowLeft: React.Dispatch<boolean>
   subredditAutocomplete: (query: string) => void
+  toggleTheme: any
 }
 
 const fallbackIconUrl =
   'https://media.wired.com/photos/5954a1b05578bd7594c46869/master/w_550,c_limit/reddit-alien-red-st.jpg'
 
-export const LeftNav: React.FC<LeftNavProps> = ({
+const LeftNavPre: React.FC<LeftNavProps> = ({
   defaultSubreddits,
   autocompleteSubreddits,
   setSubreddit,
   setShowLeft,
-  subredditAutocomplete
+  subredditAutocomplete,
+  toggleTheme
 }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -46,6 +51,17 @@ export const LeftNav: React.FC<LeftNavProps> = ({
         exit={{ x: -500 }}
         transition={{ duration: 0.2, ease: customEase }}
       >
+        <LeftNavTop>
+          <Me>
+            <h4>guest</h4>
+          </Me>
+          <MeStuff>
+            <MeItem onClick={toggleTheme}>
+              <span className='material-icons'>nights_stay</span>{' '}
+              <h4>Night Mode</h4>
+            </MeItem>
+          </MeStuff>
+        </LeftNavTop>
         <SearchContainer>
           <LeftNavSearch
             placeholder='View subreddit'
@@ -99,6 +115,8 @@ export const LeftNav: React.FC<LeftNavProps> = ({
   )
 }
 
+export const LeftNav = connect(null, { toggleTheme })(LeftNavPre)
+
 const LeftNavMenu = styled(motion.div)`
   background-color: ${props => props.theme.colors.backgroundColor};
   position: fixed;
@@ -106,6 +124,55 @@ const LeftNavMenu = styled(motion.div)`
   height: 100%;
   z-index: 4;
   overflow-y: scroll;
+`
+
+const LeftNavTop = styled.div``
+
+const Me = styled.div`
+  height: 100px;
+  background-image: linear-gradient(
+    45deg,
+    ${props => props.theme.colors.primaryColor},
+    ${props => props.theme.colors.secondaryColor}
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 1rem;
+`
+
+const MeStuff = styled.ul``
+
+const MeItem = styled.li`
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  span {
+    margin: 1rem;
+  }
+
+  &::after {
+    position: absolute;
+    content: '';
+    display: inline-block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    background-color: transparent;
+    border-radius: 50px;
+    transition: 0.2s all ease-in-out;
+    z-index: -1;
+  }
+  &:active {
+    &::after {
+      background-color: ${props => props.theme.colors.navActive};
+      transform: scale(100);
+    }
+  }
 `
 
 const SubredditsList = styled.ul``
@@ -153,12 +220,5 @@ const SearchContainer = styled.div`
   padding: 1rem;
   display: flex;
   align-items: center;
-`
-
-const DarkenBackground = styled(motion.div)`
-  width: 100%;
-  position: fixed;
-  height: 100%;
-  z-index: 2;
-  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid ${props => props.theme.colors.textColorFaded};
 `

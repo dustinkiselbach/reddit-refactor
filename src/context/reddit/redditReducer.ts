@@ -1,5 +1,6 @@
 import {
   GET_POSTS,
+  CLEAR_POSTS,
   TEST_TYPE,
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
@@ -9,7 +10,9 @@ import {
   GET_POST_DETAIL,
   CLEAR_POST_DETAIL,
   FILTER_POST_FROM_POSTS,
-  SUBREDDIT_AUTOCOMPLETE
+  SUBREDDIT_AUTOCOMPLETE,
+  CHANGE_SORT_COMMENTS_BY,
+  GET_SUBREDDIT_INFO
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -28,10 +31,23 @@ export default (state: State, action: AllActions): State => {
         loading: false
       }
     }
+    case CLEAR_POSTS: {
+      return {
+        ...state,
+        posts: [],
+        after: null
+      }
+    }
     case GET_POST_DETAIL: {
       return {
         ...state,
         comments: action.payload
+      }
+    }
+    case GET_SUBREDDIT_INFO: {
+      return {
+        ...state,
+        subredditInfo: action.payload
       }
     }
     case FILTER_POST_FROM_POSTS: {
@@ -75,6 +91,12 @@ export default (state: State, action: AllActions): State => {
         sortBy: action.payload,
         after: null,
         posts: []
+      }
+    }
+    case CHANGE_SORT_COMMENTS_BY: {
+      return {
+        ...state,
+        sortCommentsBy: action.payload
       }
     }
     case SET_AFTER: {

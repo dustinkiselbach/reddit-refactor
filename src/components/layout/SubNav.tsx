@@ -5,11 +5,10 @@ import { customEase } from '../../utils/customEase'
 
 interface SubNavProps {
   changeSortBy: ((sortBy: string) => void) | undefined
+  options: string[]
 }
 
-const options = ['hot', 'new', 'rising', 'top', 'controversial']
-
-export const SubNav: React.FC<SubNavProps> = ({ changeSortBy }) => {
+export const SubNav: React.FC<SubNavProps> = ({ changeSortBy, options }) => {
   return (
     <Menu
       animate={{ y: 0, x: 0, opacity: 1 }}
@@ -39,6 +38,7 @@ const Menu = styled(motion.div)`
   margin-left: -60px;
   border-radius: 2px;
   background-color: ${props => props.theme.colors.subMenuColor};
+  box-shadow: ${props => props.theme.boxShadow};
   overflow: hidden;
 
   ul {

@@ -21,7 +21,15 @@ export const Subreddit: React.FC = () => {
   })
 
   const redditContext = useContext(RedditContext)
-  const { after, posts, subreddit, loading, sortBy, getPosts } = redditContext
+  const {
+    after,
+    posts,
+    subreddit,
+    loading,
+    sortBy,
+    getPosts,
+    getSubredditInfo
+  } = redditContext
 
   //   useEffect(() => {
   //     setSubreddit!(match.params.subreddit)
@@ -36,8 +44,9 @@ export const Subreddit: React.FC = () => {
   useEffect(() => {
     if (subreddit && posts?.length === 0) {
       getPosts!()
+      getSubredditInfo!()
     }
-  }, [subreddit, sortBy])
+  }, [posts, subreddit, sortBy])
 
   useEffect(() => {
     if (inView && after) {

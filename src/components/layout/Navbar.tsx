@@ -2,38 +2,52 @@ import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import RedditContext from '../../context/reddit/redditContext'
 import { SubNav } from './SubNav'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { LeftNav } from '../leftnavigation/LeftNav'
 import { useHistory } from 'react-router-dom'
 import { useSwipeable } from 'react-swipeable'
+import { RightNav } from '../rightnavigation/RightNav'
+import { findAllByDisplayValue } from '@testing-library/react'
 
-interface Props {
-  setTheme: React.Dispatch<string>
-  theme: string
-}
+interface Props {}
+
+const postsOptions = ['hot', 'new', 'rising', 'top', 'controversial']
+const commentsOptions = ['top', 'best', 'new', 'old', 'controversial', 'Q&A']
 
 export const Navbar: React.FC<Props> = () => {
   const [prevScrollPos, setScrollPos] = useState(window.pageYOffset)
   const [visible, setVisible] = useState(true)
   const [showSort, setShowSort] = useState(false)
   const [showLeft, setShowLeft] = useState(true)
+  const [showRight, setShowRight] = useState(false)
   const handlers = useSwipeable({
-    onSwipedLeft: () => setShowLeft(false)
+    onSwipedLeft: () => setShowLeft(false),
+    onSwipedRight: () => setShowRight(false)
   })
-  const closedHandlers = useSwipeable({
+
+  const rightHandler = useSwipeable({
     onSwipedRight: () => setShowLeft(true)
   })
+
+  const leftHandler = useSwipeable({
+    onSwipedLeft: () => setShowRight(true)
+  })
+
   let history = useHistory()
 
   const redditContext = useContext(RedditContext)
   const {
     subreddit,
+    subredditInfo,
     sortBy,
+    sortCommentsBy,
     defaultSubreddits,
     autocompleteSubreddits,
     post,
     getPosts,
+    clearPosts,
     changeSortBy,
+    changeSortCommentsBy,
     setSubreddit,
     subredditAutocomplete
   } = redditContext
@@ -53,63 +67,96 @@ export const Navbar: React.FC<Props> = () => {
     setVisible(visible)
   }
 
-  let leftButton
-
   if (post) {
-    leftButton = (
-      <NavIcon onClick={() => history.goBack()}>
-        <span className='material-icons'>arrow_back</span>
-      </NavIcon>
+    return (
+      <>
+        <Nav visible={visible}>
+          <NavIcon onClick={() => history.goBack()}>
+            <span className='material-icons'>arrow_back</span>
+          </NavIcon>
+          <div>
+            <h2>{subreddit}</h2>
+            <label>{sortCommentsBy}</label>
+          </div>
+          <NavIcon>
+            <span className='material-icons'>arrow_drop_down</span>
+          </NavIcon>
+
+          <NavIcon onClick={getPosts}>
+            <span className='material-icons'>refresh</span>
+          </NavIcon>
+          <NavIcon onClick={() => setShowSort(!showSort)}>
+            <span className='material-icons'>sort</span>
+            <AnimatePresence>
+              {showSort && (
+                <SubNav
+                  changeSortBy={changeSortCommentsBy!}
+                  options={commentsOptions}
+                />
+              )}
+            </AnimatePresence>
+          </NavIcon>
+          <NavIcon>
+            <span className='material-icons'>more_vert</span>
+          </NavIcon>
+        </Nav>
+      </>
     )
   } else {
-    leftButton = (
-      <NavIcon onClick={() => setShowLeft(true)}>
-        <span className='material-icons'>menu</span>
-      </NavIcon>
+    return (
+      <>
+        <SwipeRight {...rightHandler} />
+        <SwipeLeft {...leftHandler} />
+        <AnimatePresence>
+          {showLeft && defaultSubreddits && (
+            <div {...handlers}>
+              <LeftNav
+                defaultSubreddits={defaultSubreddits}
+                autocompleteSubreddits={autocompleteSubreddits}
+                setSubreddit={setSubreddit!}
+                setShowLeft={setShowLeft}
+                subredditAutocomplete={subredditAutocomplete!}
+              />
+            </div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showRight && subredditInfo && (
+            <div {...handlers}>
+              <RightNav subredditInfo={subredditInfo} />
+            </div>
+          )}
+        </AnimatePresence>
+        <Nav visible={visible}>
+          <NavIcon onClick={() => setShowLeft(true)}>
+            <span className='material-icons'>menu</span>
+          </NavIcon>
+          <div>
+            <h2>{subreddit}</h2>
+            <label>{sortBy}</label>
+          </div>
+          <NavIcon>
+            <span className='material-icons'>arrow_drop_down</span>
+          </NavIcon>
+
+          <NavIcon onClick={clearPosts!}>
+            <span className='material-icons'>refresh</span>
+          </NavIcon>
+          <NavIcon onClick={() => setShowSort(!showSort)}>
+            <span className='material-icons'>sort</span>
+            <AnimatePresence>
+              {showSort && (
+                <SubNav changeSortBy={changeSortBy} options={postsOptions} />
+              )}
+            </AnimatePresence>
+          </NavIcon>
+          <NavIcon>
+            <span className='material-icons'>more_vert</span>
+          </NavIcon>
+        </Nav>
+      </>
     )
   }
-
-  return (
-    <>
-      <SwipeRight {...closedHandlers} />
-      <AnimatePresence>
-        {showLeft && defaultSubreddits && (
-          <div {...handlers}>
-            <LeftNav
-              defaultSubreddits={defaultSubreddits}
-              autocompleteSubreddits={autocompleteSubreddits}
-              setSubreddit={setSubreddit!}
-              setShowLeft={setShowLeft}
-              subredditAutocomplete={subredditAutocomplete!}
-            />
-          </div>
-        )}
-      </AnimatePresence>
-      <Nav visible={visible}>
-        {leftButton}
-        <div>
-          <h2>{subreddit}</h2>
-          <label>{sortBy}</label>
-        </div>
-        <NavIcon>
-          <span className='material-icons'>arrow_drop_down</span>
-        </NavIcon>
-
-        <NavIcon onClick={getPosts}>
-          <span className='material-icons'>refresh</span>
-        </NavIcon>
-        <NavIcon onClick={() => setShowSort(!showSort)}>
-          <span className='material-icons'>sort</span>
-          <AnimatePresence>
-            {showSort && <SubNav changeSortBy={changeSortBy} />}
-          </AnimatePresence>
-        </NavIcon>
-        <NavIcon>
-          <span className='material-icons'>more_vert</span>
-        </NavIcon>
-      </Nav>
-    </>
-  )
 }
 
 const Nav = styled.nav<{ visible: boolean }>`
@@ -120,6 +167,7 @@ const Nav = styled.nav<{ visible: boolean }>`
   position: fixed;
   width: calc(100%);
   background-color: ${props => props.theme.colors.backgroundColor};
+  box-shadow: ${props => props.theme.boxShadow};
   transform: translateY(${props => (props.visible ? '0' : '-100px')});
   transition: all 0.2s ease-in-out;
   z-index: 1;
@@ -157,6 +205,16 @@ const NavIcon = styled.div`
 const SwipeRight = styled.div`
   height: 100%;
   background-color: transparent;
-  width: 5px;
+  width: 15px;
+  z-index: 3;
   position: fixed;
+`
+
+const SwipeLeft = styled.div`
+  height: 100%;
+  background-color: transparent;
+  width: 15px;
+  z-index: 3;
+  position: fixed;
+  right: 0;
 `

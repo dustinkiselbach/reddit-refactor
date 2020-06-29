@@ -6,6 +6,7 @@ import axios from 'axios'
 
 import {
   GET_POSTS,
+  CLEAR_POSTS,
   TEST_TYPE,
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
@@ -15,7 +16,9 @@ import {
   SET_AFTER,
   GET_POST_DETAIL,
   CLEAR_POST_DETAIL,
-  SUBREDDIT_AUTOCOMPLETE
+  SUBREDDIT_AUTOCOMPLETE,
+  CHANGE_SORT_COMMENTS_BY,
+  GET_SUBREDDIT_INFO
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
@@ -31,9 +34,11 @@ const RedditState: React.FC<Props> = ({ children }) => {
   const initialState = {
     loading: false,
     subreddit: null,
+    subredditInfo: null,
     defaultSubreddits: null,
     autocompleteSubreddits: null,
     sortBy: 'hot',
+    sortCommentsBy: 'suggested',
     posts: [],
     post: null,
     comments: null,
@@ -71,6 +76,10 @@ const RedditState: React.FC<Props> = ({ children }) => {
     }
   }
 
+  const clearPosts = () => {
+    dispatch({ type: CLEAR_POSTS, payload: null })
+  }
+
   const filterPostFromPosts = (name: string) => {
     dispatch({ type: FILTER_POST_FROM_POSTS, payload: name })
   }
@@ -79,7 +88,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
     filterPostFromPosts(name)
     try {
       const res = await axios.get(
-        `https://oauth.reddit.com/r/${permalink}.json?raw_json=1`
+        `https://oauth.reddit.com/r/${permalink}.json?raw_json=1&sort=${state.sortCommentsBy}`
       )
 
       dispatch({
@@ -138,6 +147,21 @@ const RedditState: React.FC<Props> = ({ children }) => {
     }
   }
 
+  const getSubredditInfo = async () => {
+    try {
+      const res = await axios.get(
+        `https://oauth.reddit.com/r/${state.subreddit}/about`
+      )
+
+      dispatch({
+        type: GET_SUBREDDIT_INFO,
+        payload: res.data
+      })
+    } catch (err) {
+      throw err
+    }
+  }
+
   const clearPostDetail = () => {
     dispatch({ type: CLEAR_POST_DETAIL, payload: null })
   }
@@ -153,6 +177,9 @@ const RedditState: React.FC<Props> = ({ children }) => {
   const changeSortBy = (sortBy: string) => {
     dispatch({ type: CHANGE_SORT_BY, payload: sortBy })
   }
+  const changeSortCommentsBy = (sortCommentsBy: string) => {
+    dispatch({ type: CHANGE_SORT_COMMENTS_BY, payload: sortCommentsBy })
+  }
 
   const tryTest = () => {
     dispatch({ type: TEST_TYPE, payload: null })
@@ -164,20 +191,25 @@ const RedditState: React.FC<Props> = ({ children }) => {
         subreddit: state.subreddit,
         defaultSubreddits: state.defaultSubreddits,
         autocompleteSubreddits: state.autocompleteSubreddits,
+        subredditInfo: state.subredditInfo,
         posts: state.posts,
         post: state.post,
         comments: state.comments,
         sortBy: state.sortBy,
+        sortCommentsBy: state.sortCommentsBy,
         loading: state.loading,
         after: state.after,
         tryTest,
         getPosts,
+        clearPosts,
         getPostDetail,
         getMoreComments,
+        getSubredditInfo,
         clearPostDetail,
         setSubreddit,
         subredditAutocomplete,
-        changeSortBy
+        changeSortBy,
+        changeSortCommentsBy
       }}
     >
       {children}

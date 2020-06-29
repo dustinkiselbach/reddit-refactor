@@ -123,7 +123,7 @@ export const SubredditPost: React.FC<SubredditPostProps> = ({
         )}
       </PostPreview>
       <Container>
-        <PostTitle stickied={stickied ? true : false}>
+        <PostTitle stickied={stickied}>
           <h2>
             <Link to={`${permalink}${name}`}>{title}</Link>
           </h2>
@@ -180,6 +180,7 @@ const Post = styled(motion.div)`
   margin: 0.5rem 0;
   position: relative;
   overflow: hidden;
+  box-shadow: ${props => props.theme.boxShadow};
 `
 
 const PostPreview = styled.div``
@@ -238,7 +239,7 @@ const PreviewLink = styled.a`
 `
 
 const PostTitle = styled.div<{ stickied: boolean }>`
-  h2 {
+  a {
     color: ${props =>
       props.stickied
         ? props.theme.colors.primaryColor

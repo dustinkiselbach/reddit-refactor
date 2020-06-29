@@ -20,7 +20,7 @@ interface PostData {
   selftext: string
   secure_media?: any
   subreddit: string
-  stickied: string
+  stickied: boolean
   thumbnail: string
   title: string
   url: string

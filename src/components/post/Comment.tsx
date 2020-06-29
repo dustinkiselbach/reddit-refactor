@@ -28,16 +28,16 @@ export const Comment: React.FC<CommentProps> = ({
   postName,
   getMoreComments
 }) => {
-  console.log(comment)
   const [loadMore, setLoadMore] = useState(false)
-  const [moreComments, setMoreComments] = useState<any>(null)
+  const [moreComments, setMoreComments] = useState<CommentData[] | null>(null)
 
-  const fart = async (children: string[]) => {
+  const getMoreReplies = async (children: string[]) => {
     setLoadMore(true)
     const res = await getMoreComments(postName, children)
     setMoreComments(res)
   }
-  console.log(moreComments)
+  // console.log(comment)
+  // console.log(moreComments)
 
   if (isComment(comment)) {
     const {
@@ -59,6 +59,7 @@ export const Comment: React.FC<CommentProps> = ({
       <>
         <CommentContainer
           variants={childVariants}
+          exit={{ x: -200 }}
           transition={{ duration: 0.2, ease: customEase }}
           style={{ marginLeft: number * 2 }}
           labelColor={
@@ -133,7 +134,7 @@ export const Comment: React.FC<CommentProps> = ({
               number === 0 ? 'transparent' : colors[number % colors.length]
             }
             more={true}
-            onClick={() => fart(children)}
+            onClick={() => getMoreReplies(children)}
           >
             {loadMore ? (
               <CommentItem>Loading . . . </CommentItem>
@@ -145,14 +146,16 @@ export const Comment: React.FC<CommentProps> = ({
           <>
             {moreComments &&
               moreComments.map((comment: CommentData, index: number) => (
-                <Comment
-                  key={index}
-                  more={true}
-                  comment={comment}
-                  number={number}
-                  postName={postName}
-                  getMoreComments={getMoreComments}
-                />
+                <>
+                  <Comment
+                    key={index}
+                    more={true}
+                    comment={comment}
+                    number={comment.data.depth}
+                    postName={postName}
+                    getMoreComments={getMoreComments}
+                  />
+                </>
               ))}
           </>
         )}

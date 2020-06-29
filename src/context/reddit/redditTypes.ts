@@ -25,7 +25,7 @@ export interface PostData {
     selftext_html: string
     secure_media: any
     subreddit: string
-    stickied: string
+    stickied: boolean
     thumbnail: string
     title: string
     url: string
@@ -40,8 +40,11 @@ export interface CommentData {
     body_html: string
     children: CommentData[] | string
     created_utc: number
+    depth: number
     distinguished: string | null
     is_submitter: boolean
+    name: string
+    parent_id: string
     replies: CommentData | string
     score: number
     score_hidden: boolean
@@ -65,7 +68,9 @@ export interface CommentMore {
 export type State = {
   loading?: boolean
   subreddit?: null | string
+  subredditInfo?: any
   sortBy?: string
+  sortCommentsBy?: string
   posts?: PostData[][]
   post?: PostData | null
   comments?: CommentData[] | null
@@ -75,11 +80,14 @@ export type State = {
   clearPostDetail?: () => void
   tryTest?: () => void
   getPosts?: () => Promise<any>
+  clearPosts?: () => void
   getPostDetail?: (permalink: string, name: string) => void
   getMoreComments?: (linkId: string, children: string[]) => Promise<any>
   setSubreddit?: (subreddit: string | null) => void
+  getSubredditInfo?: () => void
   subredditAutocomplete?: (query: string) => void
   changeSortBy?: (sortBy: string) => void
+  changeSortCommentsBy?: (sortCommentsBy: string) => void
   setLoading?: () => void
 }
 
@@ -92,13 +100,16 @@ export type DefaultSubreddit = { name: string; icon: string }
 
 export type AllActions =
   | ActionInterface<'TEST_TYPE', null>
-  | ActionInterface<'GET_POSTS', []>
-  | ActionInterface<'GET_POST_DETAIL', any>
+  | ActionInterface<'GET_POSTS', PostData[]>
+  | ActionInterface<'GET_POST_DETAIL', CommentData[]>
   | ActionInterface<'SET_SUBREDDIT', string | null>
   | ActionInterface<'SET_LOADING', null>
   | ActionInterface<'CHANGE_SORT_BY', string>
+  | ActionInterface<'CHANGE_SORT_COMMENTS_BY', string>
   | ActionInterface<'GET_DEFAULT_SUBREDDITS', DefaultSubreddit[]>
+  | ActionInterface<'GET_SUBREDDIT_INFO', any>
   | ActionInterface<'SET_AFTER', string | null>
   | ActionInterface<'CLEAR_POST_DETAIL', null>
   | ActionInterface<'FILTER_POST_FROM_POSTS', string>
   | ActionInterface<'SUBREDDIT_AUTOCOMPLETE', DefaultSubreddit[] | null>
+  | ActionInterface<'CLEAR_POSTS', null>

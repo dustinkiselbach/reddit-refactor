@@ -10,7 +10,8 @@ const darkTheme: DefaultTheme = {
     secondaryColor: '#6600ff',
     subMenuColor: 'rgb(42, 42, 42)',
     navActive: 'rgba(255,255,255,0.2)'
-  }
+  },
+  boxShadow: 'none'
 }
 
 const lightTheme: DefaultTheme = {
@@ -22,7 +23,8 @@ const lightTheme: DefaultTheme = {
     secondaryColor: '#b587ff',
     subMenuColor: 'rgb(255, 255, 255)',
     navActive: 'rgba(18,18,18,0.2)'
-  }
+  },
+  boxShadow: '0 0.4rem 0.4rem rgba(0,0,0,0.2)'
 }
 
 export { darkTheme, lightTheme }
