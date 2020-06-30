@@ -13,6 +13,7 @@ import {
   FILTER_POST_FROM_POSTS,
   SET_LOADING,
   CHANGE_SORT_BY,
+  CHANGE_SORT_BY_INTERVAL,
   SET_AFTER,
   GET_POST_DETAIL,
   CLEAR_POST_DETAIL,
@@ -38,6 +39,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
     defaultSubreddits: null,
     autocompleteSubreddits: null,
     sortBy: 'hot',
+    sortByInterval: null,
     sortCommentsBy: 'suggested',
     posts: [],
     post: null,
@@ -57,7 +59,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
     }
     try {
       const res = await axios.get(
-        `https://oauth.reddit.com/r/${state.subreddit}/${state.sortBy}.json?raw_json=1&after=${state.after}`
+        `https://oauth.reddit.com/r/${state.subreddit}/${state.sortBy}.json?raw_json=1&after=${state.after}&t=${state.sortByInterval}`
       )
 
       console.log(res)
@@ -174,8 +176,13 @@ const RedditState: React.FC<Props> = ({ children }) => {
     dispatch({ type: SET_LOADING, payload: null })
   }
 
-  const changeSortBy = (sortBy: string) => {
+  const changeSortBy = (sortBy: string, sortByInterval?: string) => {
     dispatch({ type: CHANGE_SORT_BY, payload: sortBy })
+    if (sortByInterval) {
+      dispatch({ type: CHANGE_SORT_BY_INTERVAL, payload: sortByInterval })
+    } else {
+      dispatch({ type: CHANGE_SORT_BY_INTERVAL, payload: null })
+    }
   }
   const changeSortCommentsBy = (sortCommentsBy: string) => {
     dispatch({ type: CHANGE_SORT_COMMENTS_BY, payload: sortCommentsBy })
@@ -196,6 +203,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
         post: state.post,
         comments: state.comments,
         sortBy: state.sortBy,
+        sortByInterval: state.sortByInterval,
         sortCommentsBy: state.sortCommentsBy,
         loading: state.loading,
         after: state.after,

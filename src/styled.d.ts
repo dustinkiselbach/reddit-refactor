@@ -12,6 +12,7 @@ declare module 'styled-components' {
       secondaryColor: string
       subMenuColor: string
       navActive: string
+      highlight: string
     }
     boxShadow: string
   }

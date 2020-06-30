@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from 'react-router-dom'
 import RedditContext from '../../context/reddit/redditContext'
@@ -17,6 +17,8 @@ interface PostProps
   }> {}
 
 export const Post: React.FC<PostProps> = ({ match }) => {
+  const [clickedId, setClickedId] = useState<null | string>(null)
+
   const {
     params: { subreddit, id, title, name }
   } = match
@@ -60,6 +62,8 @@ export const Post: React.FC<PostProps> = ({ match }) => {
               comments={comments}
               getMoreComments={getMoreComments!}
               postName={name}
+              setClickedId={setClickedId}
+              clickedId={clickedId}
             />
           </CommentsContainer>
         </>

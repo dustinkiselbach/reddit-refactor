@@ -42,6 +42,7 @@ export interface CommentData {
     created_utc: number
     depth: number
     distinguished: string | null
+    id: string
     is_submitter: boolean
     name: string
     parent_id: string
@@ -70,6 +71,7 @@ export type State = {
   subreddit?: null | string
   subredditInfo?: any
   sortBy?: string
+  sortByInterval?: string | null
   sortCommentsBy?: string
   posts?: PostData[][]
   post?: PostData | null
@@ -86,7 +88,7 @@ export type State = {
   setSubreddit?: (subreddit: string | null) => void
   getSubredditInfo?: () => void
   subredditAutocomplete?: (query: string) => void
-  changeSortBy?: (sortBy: string) => void
+  changeSortBy?: (sortBy: string, sortByInterval?: string) => void
   changeSortCommentsBy?: (sortCommentsBy: string) => void
   setLoading?: () => void
 }
@@ -105,6 +107,7 @@ export type AllActions =
   | ActionInterface<'SET_SUBREDDIT', string | null>
   | ActionInterface<'SET_LOADING', null>
   | ActionInterface<'CHANGE_SORT_BY', string>
+  | ActionInterface<'CHANGE_SORT_BY_INTERVAL', string | null>
   | ActionInterface<'CHANGE_SORT_COMMENTS_BY', string>
   | ActionInterface<'GET_DEFAULT_SUBREDDITS', DefaultSubreddit[]>
   | ActionInterface<'GET_SUBREDDIT_INFO', any>

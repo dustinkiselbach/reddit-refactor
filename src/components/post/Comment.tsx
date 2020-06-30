@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Dispatch, SetStateAction } from 'react'
 import { CommentData, CommentMore } from '../../context/reddit/redditTypes'
 import { Comments } from './Comments'
 import styled from 'styled-components'
@@ -7,8 +7,11 @@ import { motion } from 'framer-motion'
 import { childVariants } from '../../utils/variants'
 import { customEase } from '../../utils/customEase'
 import { decodeHTML } from '../../utils/decodeHtml'
+import { CommentItemMenu } from './CommentItemMenu'
 
 interface CommentProps {
+  clickedId: string | null
+  setClickedId: Dispatch<SetStateAction<string | null>>
   comment: CommentData | CommentMore
   number: number
   more?: boolean
@@ -22,6 +25,8 @@ const isComment = (variableToCheck: any): variableToCheck is CommentData =>
 const colors = ['#de3e49', '#3e56de', '#d433ce', '#33d453', '#ed683b']
 
 export const Comment: React.FC<CommentProps> = ({
+  clickedId,
+  setClickedId,
   comment,
   number,
   more,
@@ -29,6 +34,7 @@ export const Comment: React.FC<CommentProps> = ({
   getMoreComments
 }) => {
   const [loadMore, setLoadMore] = useState(false)
+
   const [moreComments, setMoreComments] = useState<CommentData[] | null>(null)
 
   const getMoreReplies = async (children: string[]) => {
@@ -36,8 +42,8 @@ export const Comment: React.FC<CommentProps> = ({
     const res = await getMoreComments(postName, children)
     setMoreComments(res)
   }
-  // console.log(comment)
-  // console.log(moreComments)
+  console.log(comment)
+  console.log(moreComments)
 
   if (isComment(comment)) {
     const {
@@ -47,6 +53,7 @@ export const Comment: React.FC<CommentProps> = ({
         body_html,
         created_utc,
         distinguished,
+        id,
         is_submitter,
         replies,
         score,
@@ -65,6 +72,8 @@ export const Comment: React.FC<CommentProps> = ({
           labelColor={
             number === 0 ? 'transparent' : colors[number % colors.length]
           }
+          onClick={() => setClickedId(id)}
+          clicked={clickedId === id}
         >
           <CommentItem>
             <CommentMeta>
@@ -103,6 +112,7 @@ export const Comment: React.FC<CommentProps> = ({
             ></div>
           </CommentItem>
         </CommentContainer>
+        {clickedId === id && <CommentItemMenu author={author} />}
         {/* recursivly calling replies */}
         {replies instanceof Object && (
           <Comments
@@ -110,6 +120,8 @@ export const Comment: React.FC<CommentProps> = ({
             number={number + 1}
             getMoreComments={getMoreComments}
             postName={postName}
+            clickedId={clickedId}
+            setClickedId={setClickedId}
           />
         )}
       </>
@@ -154,6 +166,8 @@ export const Comment: React.FC<CommentProps> = ({
                     number={comment.data.depth}
                     postName={postName}
                     getMoreComments={getMoreComments}
+                    clickedId={clickedId}
+                    setClickedId={setClickedId}
                   />
                 </>
               ))}
@@ -166,6 +180,7 @@ export const Comment: React.FC<CommentProps> = ({
 
 const CommentContainer = styled(motion.div)<{
   labelColor: string
+  clicked?: boolean
   more?: boolean
 }>`
   position: relative;
@@ -186,6 +201,8 @@ const CommentContainer = styled(motion.div)<{
     props.more
       ? props.theme.colors.primaryColor
       : props.theme.colors.textColor};
+
+  background-color: ${props => props.clicked && props.theme.colors.highlight};
 `
 const CommentItem = styled.div`
   padding: 0.5rem;

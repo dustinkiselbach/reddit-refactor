@@ -3,55 +3,48 @@ import styled from 'styled-components'
 import { motion } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
 
-interface SubNavProps {
-  changeSortBy: ((sortBy: string) => void) | undefined
-  options: string[]
-  subSubEnabled?: boolean
-  setShowSubSort?: Dispatch<SetStateAction<boolean>>
-  setSortLabel?: Dispatch<SetStateAction<string | null>>
+interface SubSubNavProps {
+  changeSortBy: ((sortBy: string, sortByInterval?: string) => void) | undefined
+  setShowSubSort: Dispatch<SetStateAction<boolean>>
+  setShowSort: Dispatch<SetStateAction<boolean>>
+  sortLabel: string | null
 }
 
-export const SubNav: React.FC<SubNavProps> = ({
-  changeSortBy,
-  options,
-  subSubEnabled,
-  setShowSubSort,
-  setSortLabel
-}) => {
-  const openSubSubMenu = (option: string) => {
-    setShowSubSort!(true)
-    setSortLabel!(option)
-  }
+const options = ['hour', 'day', 'week', 'month', 'year', 'all']
 
+export const SubSubNav: React.FC<SubSubNavProps> = ({
+  changeSortBy,
+  setShowSubSort,
+  setShowSort,
+  sortLabel
+}) => {
   return (
-    <Menu
-      animate={{ y: 0, x: 0, opacity: 1 }}
-      initial={{ y: -100, x: 10, opacity: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: customEase }}
-    >
-      <ul>
-        {options.map(option => (
-          <li
-            key={option}
-            onClick={() => {
-              subSubEnabled && (option === 'top' || option === 'controversial')
-                ? // open subsub menu
-                  openSubSubMenu(option)
-                : changeSortBy!(option)
-            }}
-          >
-            {option}
-            {subSubEnabled && option === 'top' && (
-              <span className='material-icons'>arrow_right</span>
-            )}
-            {subSubEnabled && option === 'controversial' && (
-              <span className='material-icons'>arrow_right</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </Menu>
+    <>
+      {sortLabel && (
+        <Menu
+          animate={{ y: 0, opacity: 1 }}
+          initial={{ y: -100, opacity: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: customEase }}
+        >
+          <ul>
+            <h4>{sortLabel}</h4>
+            {options.map(option => (
+              <li
+                onClick={() => {
+                  changeSortBy!(sortLabel, option)
+                  setShowSubSort(false)
+                  setShowSort(false)
+                }}
+                key={option}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        </Menu>
+      )}
+    </>
   )
 }
 
@@ -68,6 +61,17 @@ const Menu = styled(motion.div)`
   background-color: ${props => props.theme.colors.subMenuColor};
   box-shadow: ${props => props.theme.boxShadow};
   overflow: hidden;
+
+  h4 {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    font-size: 1.5rem;
+    position: relative;
+    text-transform: capitalize;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   ul {
     li {

@@ -19,7 +19,6 @@ export const themeReducer = (
         palette: state.palette === 'dark' ? 'light' : 'dark'
       }
     default:
-      console.log('fart')
       return state
   }
 }

@@ -9,7 +9,8 @@ const darkTheme: DefaultTheme = {
     primaryColor: '#FFB300',
     secondaryColor: '#6600ff',
     subMenuColor: 'rgb(42, 42, 42)',
-    navActive: 'rgba(255,255,255,0.2)'
+    navActive: 'rgba(255,255,255,0.2)',
+    highlight: '#264061'
   },
   boxShadow: 'none'
 }
@@ -22,7 +23,8 @@ const lightTheme: DefaultTheme = {
     primaryColor: '#FFD54F',
     secondaryColor: '#b587ff',
     subMenuColor: 'rgb(255, 255, 255)',
-    navActive: 'rgba(18,18,18,0.2)'
+    navActive: 'rgba(18,18,18,0.2)',
+    highlight: '#65A6F9'
   },
   boxShadow: '0 0.4rem 0.4rem rgba(0,0,0,0.2)'
 }

@@ -7,7 +7,7 @@ import { LeftNav } from '../leftnavigation/LeftNav'
 import { useHistory } from 'react-router-dom'
 import { useSwipeable } from 'react-swipeable'
 import { RightNav } from '../rightnavigation/RightNav'
-import { findAllByDisplayValue } from '@testing-library/react'
+import { SubSubNav } from './SubSubNav'
 
 interface Props {}
 
@@ -18,8 +18,11 @@ export const Navbar: React.FC<Props> = () => {
   const [prevScrollPos, setScrollPos] = useState(window.pageYOffset)
   const [visible, setVisible] = useState(true)
   const [showSort, setShowSort] = useState(false)
+  const [showSubSort, setShowSubSort] = useState(false)
+  const [sortLabel, setSortLabel] = useState<null | string>(null)
   const [showLeft, setShowLeft] = useState(true)
   const [showRight, setShowRight] = useState(false)
+
   const handlers = useSwipeable({
     onSwipedLeft: () => setShowLeft(false),
     onSwipedRight: () => setShowRight(false)
@@ -40,6 +43,7 @@ export const Navbar: React.FC<Props> = () => {
     subreddit,
     subredditInfo,
     sortBy,
+    sortByInterval,
     sortCommentsBy,
     defaultSubreddits,
     autocompleteSubreddits,
@@ -133,7 +137,10 @@ export const Navbar: React.FC<Props> = () => {
           </NavIcon>
           <div>
             <h2>{subreddit}</h2>
-            <label>{sortBy}</label>
+            <label>
+              {sortBy}
+              {sortByInterval && ': ' + sortByInterval}
+            </label>
           </div>
           <NavIcon>
             <span className='material-icons'>arrow_drop_down</span>
@@ -142,11 +149,28 @@ export const Navbar: React.FC<Props> = () => {
           <NavIcon onClick={clearPosts!}>
             <span className='material-icons'>refresh</span>
           </NavIcon>
-          <NavIcon onClick={() => setShowSort(!showSort)}>
+          {/* seems like this works, might cause problems in the future */}
+          <NavIcon onClick={() => setShowSort(!showSort && !showSubSort)}>
             <span className='material-icons'>sort</span>
             <AnimatePresence>
               {showSort && (
-                <SubNav changeSortBy={changeSortBy} options={postsOptions} />
+                <SubNav
+                  changeSortBy={changeSortBy}
+                  subSubEnabled={true}
+                  options={postsOptions}
+                  setShowSubSort={setShowSubSort}
+                  setSortLabel={setSortLabel}
+                />
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {showSubSort && (
+                <SubSubNav
+                  sortLabel={sortLabel}
+                  changeSortBy={changeSortBy}
+                  setShowSort={setShowSort}
+                  setShowSubSort={setShowSubSort}
+                />
               )}
             </AnimatePresence>
           </NavIcon>

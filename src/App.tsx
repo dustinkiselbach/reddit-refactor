@@ -13,6 +13,7 @@ import { Post } from './components/post/Post'
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
 import { MyThemeProvider } from './themes/MyThemeProvider'
+import UserState from './context/user/UserState'
 
 const App: React.FC = () => {
   return (
@@ -20,20 +21,22 @@ const App: React.FC = () => {
       <Provider store={store}>
         <AuthState>
           <RedditState>
-            <MyThemeProvider>
-              <GlobalStyle />
-              <Router>
-                <Navbar />
-                <Switch>
-                  <Route exact path='/' component={Subreddit} />
-                  <Route
-                    exact
-                    path='/r/:subreddit/comments/:id/:title/:name'
-                    component={Post}
-                  />
-                </Switch>
-              </Router>
-            </MyThemeProvider>
+            <UserState>
+              <MyThemeProvider>
+                <GlobalStyle />
+                <Router>
+                  <Navbar />
+                  <Switch>
+                    <Route exact path='/' component={Subreddit} />
+                    <Route
+                      exact
+                      path='/r/:subreddit/comments/:id/:title/:name'
+                      component={Post}
+                    />
+                  </Switch>
+                </Router>
+              </MyThemeProvider>
+            </UserState>
           </RedditState>
         </AuthState>
       </Provider>

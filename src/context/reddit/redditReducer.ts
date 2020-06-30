@@ -12,7 +12,8 @@ import {
   FILTER_POST_FROM_POSTS,
   SUBREDDIT_AUTOCOMPLETE,
   CHANGE_SORT_COMMENTS_BY,
-  GET_SUBREDDIT_INFO
+  GET_SUBREDDIT_INFO,
+  CHANGE_SORT_BY_INTERVAL
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -91,6 +92,12 @@ export default (state: State, action: AllActions): State => {
         sortBy: action.payload,
         after: null,
         posts: []
+      }
+    }
+    case CHANGE_SORT_BY_INTERVAL: {
+      return {
+        ...state,
+        sortByInterval: action.payload
       }
     }
     case CHANGE_SORT_COMMENTS_BY: {
