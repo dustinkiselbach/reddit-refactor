@@ -1,18 +1,14 @@
-import React, { useContext } from 'react'
-import UserContext from '../../context/user/userContext'
+import React from 'react'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
 import { customEase } from '../../utils/customEase'
+import { Link } from 'react-router-dom'
 
 interface CommentItemMenuProps {
   author: string
 }
 
 export const CommentItemMenu: React.FC<CommentItemMenuProps> = ({ author }) => {
-  const userContext = useContext(UserContext)
-
-  const { getUserAbout } = userContext
-
   return (
     <CommentMenuItemContainer
       initial={{ scaleY: 0, y: '-100%' }}
@@ -22,9 +18,9 @@ export const CommentItemMenu: React.FC<CommentItemMenuProps> = ({ author }) => {
       <Icon className='material-icons'>arrow_upward</Icon>
       <Icon className='material-icons'>arrow_downward</Icon>
       <Icon className='material-icons'>star</Icon>
-      <Icon className='material-icons' onClick={() => getUserAbout!(author)}>
-        account_circle
-      </Icon>
+      <Link to={`/user/${author}`}>
+        <Icon className='material-icons'>account_circle</Icon>
+      </Link>
       <Icon className='material-icons'>reply</Icon>
       <Icon className='material-icons'>expand_less</Icon>
       <Icon className='material-icons'>more_vert</Icon>

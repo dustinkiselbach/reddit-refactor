@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import AuthState from './context/auth/AuthState'
 import RedditState from './context/reddit/RedditState'
+import UserState from './context/user/UserState'
 
 import { GlobalStyle } from './GlobalStyle'
 
@@ -13,7 +14,7 @@ import { Post } from './components/post/Post'
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
 import { MyThemeProvider } from './themes/MyThemeProvider'
-import UserState from './context/user/UserState'
+import { User } from './components/user/User'
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
                       path='/r/:subreddit/comments/:id/:title/:name'
                       component={Post}
                     />
+                    <Route exact path='/user/:userName' component={User} />
                   </Switch>
                 </Router>
               </MyThemeProvider>

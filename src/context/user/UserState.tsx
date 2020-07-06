@@ -3,6 +3,7 @@ import React, { useReducer } from 'react'
 import UserContext from './userContext'
 import userReducer from './userReducer'
 import axios from 'axios'
+import { GET_USER_TROPHIES, GET_USER_ABOUT } from '../types'
 
 interface Props {
   children: React.ReactNode
@@ -10,7 +11,10 @@ interface Props {
 
 const UserState: React.FC<Props> = ({ children }) => {
   const initialState = {
-    test: 'test'
+    loading: false,
+    test: 'test',
+    userData: null,
+    userTrophies: null
   }
 
   const [state, dispatch] = useReducer(userReducer, initialState)
@@ -21,6 +25,7 @@ const UserState: React.FC<Props> = ({ children }) => {
         `https://oauth.reddit.com/api/v1/user/${userName}/trophies`
       )
       console.log(res)
+      dispatch({ type: GET_USER_TROPHIES, payload: res.data })
     } catch (err) {
       throw err
     }
@@ -32,17 +37,25 @@ const UserState: React.FC<Props> = ({ children }) => {
         `https://oauth.reddit.com/user/${userName}/about`
       )
       console.log(res)
+      dispatch({ type: GET_USER_ABOUT, payload: res.data })
     } catch (err) {
       throw err
     }
   }
 
+  const getUserInfo = (userName: string) => {
+    // setLoading
+
+    getUserAbout(userName)
+    getUserTrophies(userName)
+  }
+
   return (
     <UserContext.Provider
       value={{
-        getUserAbout,
-        getUserTrophies,
-        test: state.test
+        userData: state.userData,
+        userTrophies: state.userTrophies,
+        getUserInfo
       }}
     >
       {children}

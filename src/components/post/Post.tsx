@@ -7,6 +7,7 @@ import { Comments } from './Comments'
 import { motion } from 'framer-motion'
 import { parentVariants } from '../../utils/variants'
 import { customEase } from '../../utils/customEase'
+import { Container } from '../style/basicStyles'
 
 interface PostProps
   extends RouteComponentProps<{
@@ -72,9 +73,6 @@ export const Post: React.FC<PostProps> = ({ match }) => {
   )
 }
 
-const Container = styled(motion.div)`
-  padding: 6rem 1rem 1rem 1rem;
-`
 const CommentsContainer = styled(motion.div)`
   box-shadow: ${props => props.theme.boxShadow};
 `

@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from 'react'
 
 import RedditContext from '../../context/reddit/redditContext'
 
-import styled from 'styled-components'
 import { SubredditPost } from './SubredditPost'
 import { Loading } from '../layout/Loading'
 
@@ -11,8 +10,9 @@ import { PostData } from '../../context/reddit/redditTypes'
 import { NoMorePosts } from './NoMorePosts'
 import { GettingMorePosts } from './GettingMorePosts'
 import { PageIndicator } from './PageIndicator'
-import { motion } from 'framer-motion'
+
 import { parentVariants } from '../../utils/variants'
+import { Container } from '../style/basicStyles'
 
 export const Subreddit: React.FC = () => {
   const [ref, inView] = useInView({
@@ -87,7 +87,3 @@ export const Subreddit: React.FC = () => {
     </>
   )
 }
-
-const Container = styled(motion.div)`
-  padding: 6rem 1rem 1rem 1rem;
-`
