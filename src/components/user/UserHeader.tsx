@@ -8,8 +8,6 @@ interface UserHeaderProps {
 }
 
 export const UserHeader: React.FC<UserHeaderProps> = ({ userData }) => {
-  console.log(userData)
-
   const {
     data: { comment_karma, created_utc, name, link_karma }
   } = userData
@@ -26,7 +24,10 @@ export const UserHeader: React.FC<UserHeaderProps> = ({ userData }) => {
       </UserKarma>
       <UserDates>
         <p>
-          redditor for <Moment date={created_utc} durationFromNow unix />
+          redditor since{' '}
+          <Moment unix fromNow>
+            {created_utc}
+          </Moment>
         </p>
         <p>
           joined on{' '}

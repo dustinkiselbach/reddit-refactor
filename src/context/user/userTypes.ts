@@ -1,9 +1,16 @@
+import { PostData, CommentData } from '../reddit/redditTypes'
+
 export type State = {
   test?: string
   loading?: boolean
   userData?: UserData | null
+  userPosts?: (PostData | CommentData)[][]
   userTrophies?: TrophyList | null
-  getUserInfo?: (userName: string) => void
+  userName?: string | null
+  sortUserContentBy?: string
+  getUserInfo?: (userName: string | null) => void
+  getUserPosts?: (userName: string) => void
+  changeSortUserContentBy?: (sortBy: string) => void
 }
 
 export interface Trophy {
@@ -46,3 +53,7 @@ export type AllActions =
   | ActionInterface<'TEST_TYPE', null>
   | ActionInterface<'GET_USER_TROPHIES', TrophyList>
   | ActionInterface<'GET_USER_ABOUT', UserData>
+  | ActionInterface<'GET_USERNAME', string | null>
+  | ActionInterface<'CLEAR_USER_INFO', null>
+  | ActionInterface<'CHANGE_SORT_USER_CONTENT_BY', string>
+  | ActionInterface<'GET_USER_POSTS', (CommentData | PostData)[]>

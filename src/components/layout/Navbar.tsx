@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import RedditContext from '../../context/reddit/redditContext'
+import UserContext from '../../context/user/userContext'
 import { SubNav } from './SubNav'
 import { AnimatePresence } from 'framer-motion'
 import { LeftNav } from '../leftnavigation/LeftNav'
@@ -13,6 +14,7 @@ interface Props {}
 
 const postsOptions = ['hot', 'new', 'rising', 'top', 'controversial']
 const commentsOptions = ['top', 'best', 'new', 'old', 'controversial', 'Q&A']
+const userOptions = ['new', 'hot', 'top', 'controversial']
 
 export const Navbar: React.FC<Props> = () => {
   const [prevScrollPos, setScrollPos] = useState(window.pageYOffset)
@@ -56,6 +58,9 @@ export const Navbar: React.FC<Props> = () => {
     subredditAutocomplete
   } = redditContext
 
+  const userContext = useContext(UserContext)
+  const { userName, sortUserContentBy, changeSortUserContentBy } = userContext
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
 
@@ -96,6 +101,41 @@ export const Navbar: React.FC<Props> = () => {
                 <SubNav
                   changeSortBy={changeSortCommentsBy!}
                   options={commentsOptions}
+                />
+              )}
+            </AnimatePresence>
+          </NavIcon>
+          <NavIcon>
+            <span className='material-icons'>more_vert</span>
+          </NavIcon>
+        </Nav>
+      </>
+    )
+  } else if (userName) {
+    return (
+      <>
+        <Nav visible={visible}>
+          <NavIcon onClick={() => history.goBack()}>
+            <span className='material-icons'>arrow_back</span>
+          </NavIcon>
+          <div>
+            <h2>{userName}</h2>
+            <label>{sortUserContentBy}</label>
+          </div>
+          <NavIcon>
+            <span className='material-icons'>arrow_drop_down</span>
+          </NavIcon>
+
+          <NavIcon onClick={getPosts}>
+            <span className='material-icons'>refresh</span>
+          </NavIcon>
+          <NavIcon onClick={() => setShowSort(!showSort)}>
+            <span className='material-icons'>sort</span>
+            <AnimatePresence>
+              {showSort && (
+                <SubNav
+                  changeSortBy={changeSortUserContentBy!}
+                  options={userOptions}
                 />
               )}
             </AnimatePresence>

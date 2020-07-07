@@ -19,7 +19,8 @@ import {
   CLEAR_POST_DETAIL,
   SUBREDDIT_AUTOCOMPLETE,
   CHANGE_SORT_COMMENTS_BY,
-  GET_SUBREDDIT_INFO
+  GET_SUBREDDIT_INFO,
+  GET_POST_ON_REFRESH
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
@@ -87,18 +88,39 @@ const RedditState: React.FC<Props> = ({ children }) => {
   }
 
   const getPostDetail = async (permalink: string, name: string) => {
-    filterPostFromPosts(name)
-    try {
-      const res = await axios.get(
-        `https://oauth.reddit.com/r/${permalink}.json?raw_json=1&sort=${state.sortCommentsBy}`
-      )
+    // FASTER IF USER ALREADY HAS POSTS LOADED
+    if (state.posts!.length > 0) {
+      filterPostFromPosts(name)
+      try {
+        const res = await axios.get(
+          `https://oauth.reddit.com/r/${permalink}.json?raw_json=1&sort=${state.sortCommentsBy}`
+        )
 
-      dispatch({
-        type: GET_POST_DETAIL,
-        payload: res.data[1].data.children
-      })
-    } catch (err) {
-      throw err
+        dispatch({
+          type: GET_POST_DETAIL,
+          payload: res.data[1].data.children
+        })
+      } catch (err) {
+        throw err
+      }
+    } else {
+      // SLOWER BUT WILL WORK IF PAGE IS RELOADED
+      try {
+        const res = await axios.get(
+          `https://oauth.reddit.com/r/${permalink}.json?raw_json=1&sort=${state.sortCommentsBy}`
+        )
+
+        dispatch({
+          type: GET_POST_DETAIL,
+          payload: res.data[1].data.children
+        })
+        dispatch({
+          type: GET_POST_ON_REFRESH,
+          payload: res.data[0].data.children[0]
+        })
+      } catch (err) {
+        throw err
+      }
     }
   }
 
@@ -116,7 +138,7 @@ const RedditState: React.FC<Props> = ({ children }) => {
   const getDefaultSubreddits = async () => {
     try {
       const res = await axios.get(
-        'https://www.reddit.com/subreddits/default.json'
+        'https://oauth.reddit.com/subreddits/default.json'
       )
 
       dispatch({

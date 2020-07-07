@@ -30,6 +30,7 @@ export interface PostData {
     title: string
     url: string
   }
+  kind: 't3'
 }
 
 export interface CommentData {
@@ -44,12 +45,15 @@ export interface CommentData {
     distinguished: string | null
     id: string
     is_submitter: boolean
+    link_title: string
     name: string
     parent_id: string
     replies: CommentData | string
     score: number
     score_hidden: boolean
+
     stickied: boolean
+    subreddit: string
   }
   kind: 't1'
 }
@@ -104,6 +108,7 @@ export type AllActions =
   | ActionInterface<'TEST_TYPE', null>
   | ActionInterface<'GET_POSTS', PostData[]>
   | ActionInterface<'GET_POST_DETAIL', CommentData[]>
+  | ActionInterface<'GET_POST_ON_REFRESH', PostData>
   | ActionInterface<'SET_SUBREDDIT', string | null>
   | ActionInterface<'SET_LOADING', null>
   | ActionInterface<'CHANGE_SORT_BY', string>

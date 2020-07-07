@@ -11,11 +11,10 @@ export const UserTrophies: React.FC<UserTrophiesProps> = ({ userTrophies }) => {
     data: { trophies }
   } = userTrophies
 
-  console.log(trophies)
   return (
     <TrophyCase>
-      {trophies.map((trophy: Trophy) => (
-        <TrophyItem>
+      {trophies.map((trophy: Trophy, index: number) => (
+        <TrophyItem key={index}>
           <img src={trophy.data.icon_40} alt='' />
           <label>{trophy.data.name}</label>
         </TrophyItem>

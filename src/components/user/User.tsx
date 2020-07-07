@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { UserHeader } from './UserHeader'
 import { UserTrophies } from './UserTrophies'
 import { Container } from '../style/basicStyles'
+import { UserPosts } from './UserPosts'
 
 interface UserProps
   extends RouteComponentProps<{
@@ -13,10 +14,21 @@ interface UserProps
 export const User: React.FC<UserProps> = ({ match }) => {
   const userContext = useContext(UserContext)
 
-  const { userData, userTrophies, getUserInfo } = userContext
+  const {
+    userData,
+    userPosts,
+    userTrophies,
+    getUserInfo,
+    getUserPosts
+  } = userContext
 
   useEffect(() => {
     getUserInfo!(match.params.userName)
+    getUserPosts!(match.params.userName)
+
+    return () => {
+      getUserInfo!(null)
+    }
   }, [])
 
   return (
@@ -27,6 +39,7 @@ export const User: React.FC<UserProps> = ({ match }) => {
           <UserTrophies userTrophies={userTrophies!} />
         </>
       )}
+      {userPosts && <UserPosts userPosts={userPosts} />}
     </Container>
   )
 }

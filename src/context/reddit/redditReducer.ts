@@ -13,7 +13,8 @@ import {
   SUBREDDIT_AUTOCOMPLETE,
   CHANGE_SORT_COMMENTS_BY,
   GET_SUBREDDIT_INFO,
-  CHANGE_SORT_BY_INTERVAL
+  CHANGE_SORT_BY_INTERVAL,
+  GET_POST_ON_REFRESH
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -43,6 +44,13 @@ export default (state: State, action: AllActions): State => {
       return {
         ...state,
         comments: action.payload
+      }
+    }
+    case GET_POST_ON_REFRESH: {
+      console.log(action.payload)
+      return {
+        ...state,
+        post: action.payload
       }
     }
     case GET_SUBREDDIT_INFO: {

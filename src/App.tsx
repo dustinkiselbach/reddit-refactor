@@ -15,31 +15,34 @@ import { store } from './redux/store'
 import { Provider } from 'react-redux'
 import { MyThemeProvider } from './themes/MyThemeProvider'
 import { User } from './components/user/User'
+import { AuthProvider } from './components/auth/AuthProvider'
 
 const App: React.FC = () => {
   return (
     <>
       <Provider store={store}>
         <AuthState>
-          <RedditState>
-            <UserState>
-              <MyThemeProvider>
-                <GlobalStyle />
-                <Router>
-                  <Navbar />
-                  <Switch>
-                    <Route exact path='/' component={Subreddit} />
-                    <Route
-                      exact
-                      path='/r/:subreddit/comments/:id/:title/:name'
-                      component={Post}
-                    />
-                    <Route exact path='/user/:userName' component={User} />
-                  </Switch>
-                </Router>
-              </MyThemeProvider>
-            </UserState>
-          </RedditState>
+          <AuthProvider>
+            <RedditState>
+              <UserState>
+                <MyThemeProvider>
+                  <GlobalStyle />
+                  <Router>
+                    <Navbar />
+                    <Switch>
+                      <Route exact path='/' component={Subreddit} />
+                      <Route
+                        exact
+                        path='/r/:subreddit/comments/:id/:title/:name'
+                        component={Post}
+                      />
+                      <Route exact path='/user/:userName' component={User} />
+                    </Switch>
+                  </Router>
+                </MyThemeProvider>
+              </UserState>
+            </RedditState>
+          </AuthProvider>
         </AuthState>
       </Provider>
     </>

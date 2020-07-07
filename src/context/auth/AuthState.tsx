@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import AuthContext from './authContext'
 import authReducer from './authReducer'
 
-import { TEST_TYPE } from '../types'
+import { AUTHENTICATE } from '../types'
 import { Props, State } from './authTypes'
 import axios, { AxiosRequestConfig } from 'axios'
 import qs from 'qs'
@@ -13,6 +13,7 @@ import { setAuthToken } from '../../utils/setAuthToken'
 // const redditAuthUrl = `https://www.reddit.com/api/v1/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=code&state=12345678&redirect_uri=http://localhost:3000&scope=identity`
 const AuthState: React.FC<Props> = ({ children }) => {
   const initialState: State = {
+    authenticated: false,
     test: 'test',
     stateToken: uuidv4()
   }
@@ -21,8 +22,10 @@ const AuthState: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     console.log('rolllling')
+
     if (localStorage.getItem('token')) {
       setAuthToken(`bearer ${localStorage.getItem('token')}`)
+      setAuthenticated()
 
       const currentTime = moment()
 
@@ -33,11 +36,7 @@ const AuthState: React.FC<Props> = ({ children }) => {
     } else {
       applicationOnlyAuth()
     }
-  })
-
-  const tryTest = () => {
-    dispatch({ type: TEST_TYPE })
-  }
+  }, [])
 
   const applicationOnlyAuth = async () => {
     const body = {
@@ -68,16 +67,21 @@ const AuthState: React.FC<Props> = ({ children }) => {
       localStorage.setItem('exp', exp.toString())
 
       setAuthToken(`bearer ${res.data.access_token}`)
+      setAuthenticated()
     } catch (err) {
       throw err
     }
+  }
+
+  const setAuthenticated = () => {
+    dispatch({ type: AUTHENTICATE, payload: true })
   }
 
   return (
     <AuthContext.Provider
       value={{
         test: state.test,
-        tryTest
+        authenticated: state.authenticated
       }}
     >
       {children}
