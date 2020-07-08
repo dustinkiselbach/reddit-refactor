@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react'
+import { useSelector } from 'react-redux'
 
 import RedditContext from '../../context/reddit/redditContext'
 
@@ -13,6 +14,7 @@ import { PageIndicator } from './PageIndicator'
 
 import { parentVariants } from '../../utils/variants'
 import { Container } from '../style/basicStyles'
+import { ReduxState } from '../../redux/store'
 
 export const Subreddit: React.FC = () => {
   const [ref, inView] = useInView({
@@ -20,12 +22,13 @@ export const Subreddit: React.FC = () => {
     rootMargin: '400px 0px'
   })
 
+  const state = useSelector((state: ReduxState) => state.loading)
+
   const redditContext = useContext(RedditContext)
   const {
     after,
     posts,
     subreddit,
-    loading,
     sortBy,
     getPosts,
     getSubredditInfo
@@ -56,7 +59,7 @@ export const Subreddit: React.FC = () => {
 
   return (
     <>
-      {loading ? (
+      {state.loading ? (
         <Loading />
       ) : (
         <section className='posts'>

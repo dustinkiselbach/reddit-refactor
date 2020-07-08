@@ -9,7 +9,7 @@ export type State = {
   userName?: string | null
   sortUserContentBy?: string
   getUserInfo?: (userName: string | null) => void
-  getUserPosts?: (userName: string) => void
+  getUserPosts?: (userName: string | null) => void
   changeSortUserContentBy?: (sortBy: string) => void
 }
 
@@ -57,3 +57,4 @@ export type AllActions =
   | ActionInterface<'CLEAR_USER_INFO', null>
   | ActionInterface<'CHANGE_SORT_USER_CONTENT_BY', string>
   | ActionInterface<'GET_USER_POSTS', (CommentData | PostData)[]>
+  | ActionInterface<'CLEAR_USER_POSTS', null>

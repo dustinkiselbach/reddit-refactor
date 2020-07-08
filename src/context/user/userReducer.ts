@@ -6,7 +6,8 @@ import {
   GET_USERNAME,
   CLEAR_USER_INFO,
   CHANGE_SORT_USER_CONTENT_BY,
-  GET_USER_POSTS
+  GET_USER_POSTS,
+  CLEAR_USER_POSTS
 } from '../types'
 
 export default (state: State, action: AllActions) => {
@@ -38,7 +39,14 @@ export default (state: State, action: AllActions) => {
     case CHANGE_SORT_USER_CONTENT_BY: {
       return {
         ...state,
-        sortUserContentBy: action.payload
+        sortUserContentBy: action.payload,
+        userPosts: []
+      }
+    }
+    case CLEAR_USER_POSTS: {
+      return {
+        ...state,
+        userPosts: []
       }
     }
     case CLEAR_USER_INFO: {

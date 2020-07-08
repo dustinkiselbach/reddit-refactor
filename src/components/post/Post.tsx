@@ -23,6 +23,7 @@ export const Post: React.FC<PostProps> = ({ match }) => {
   const {
     params: { subreddit, id, title, name }
   } = match
+
   const redditContext = useContext(RedditContext)
   const {
     post,

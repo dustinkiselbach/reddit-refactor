@@ -11,3 +11,22 @@ export const setAuthToken = (token?: string) => {
     delete axios.defaults.headers.common['Authorization']
   }
 }
+
+axios.interceptors.request.use(
+  config => {
+    let exp = localStorage.getItem('exp')
+    let now = new Date()
+
+    if (exp) {
+      if (new Date(exp) < now) {
+        console.log('expired')
+        localStorage.clear()
+        window.location.reload()
+      }
+    }
+    return config
+  },
+  err => {
+    return Promise.reject(err)
+  }
+)

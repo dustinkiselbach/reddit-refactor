@@ -2,6 +2,7 @@ import React from 'react'
 import { CommentData } from '../../context/reddit/redditTypes'
 import styled from 'styled-components'
 import Moment from 'react-moment'
+import { Link } from 'react-router-dom'
 
 interface UserCommentProps {
   comment: CommentData
@@ -11,32 +12,38 @@ export const UserComment: React.FC<UserCommentProps> = ({ comment }) => {
   const {
     data: {
       author,
-      author_flair_text,
       body_html,
       created_utc,
-      id,
       link_title,
+      permalink,
       score,
       subreddit
     }
   } = comment
   return (
-    <UserCommentContainer>
-      <div>{link_title}</div>
-      <UserCommentMeta>
-        <UserCommentMetaItem>{author}</UserCommentMetaItem>
-        <UserCommentMetaItem>{score} points</UserCommentMetaItem>
-        <UserCommentMetaItem>
-          <Moment unix fromNow>
-            {created_utc}
-          </Moment>
-        </UserCommentMetaItem>
-        <UserCommentMetaItem>{subreddit}</UserCommentMetaItem>
-      </UserCommentMeta>
-      <div dangerouslySetInnerHTML={{ __html: body_html }} />
-    </UserCommentContainer>
+    <Link to={permalink}>
+      <UserCommentContainer>
+        <UserCommentPostTitle>{link_title}</UserCommentPostTitle>
+        <UserCommentMeta>
+          <UserCommentMetaItem>{author}</UserCommentMetaItem>
+          <UserCommentMetaItem>{score} points</UserCommentMetaItem>
+          <UserCommentMetaItem>
+            <Moment unix fromNow>
+              {created_utc}
+            </Moment>
+          </UserCommentMetaItem>
+          <UserCommentMetaItem>&bull;</UserCommentMetaItem>
+          <UserCommentMetaItem>{subreddit}</UserCommentMetaItem>
+        </UserCommentMeta>
+        <div dangerouslySetInnerHTML={{ __html: body_html }} />
+      </UserCommentContainer>
+    </Link>
   )
 }
+
+const UserCommentPostTitle = styled.h4`
+  font-style: italic;
+`
 
 const UserCommentContainer = styled.div`
   position: relative;

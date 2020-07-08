@@ -1,5 +1,6 @@
 export interface Props {
   children: React.ReactNode
+  setLoading: () => void
 }
 
 export interface PostData {
@@ -48,6 +49,7 @@ export interface CommentData {
     link_title: string
     name: string
     parent_id: string
+    permalink: string
     replies: CommentData | string
     score: number
     score_hidden: boolean
@@ -71,7 +73,6 @@ export interface CommentMore {
 }
 
 export type State = {
-  loading?: boolean
   subreddit?: null | string
   subredditInfo?: any
   sortBy?: string
@@ -110,7 +111,6 @@ export type AllActions =
   | ActionInterface<'GET_POST_DETAIL', CommentData[]>
   | ActionInterface<'GET_POST_ON_REFRESH', PostData>
   | ActionInterface<'SET_SUBREDDIT', string | null>
-  | ActionInterface<'SET_LOADING', null>
   | ActionInterface<'CHANGE_SORT_BY', string>
   | ActionInterface<'CHANGE_SORT_BY_INTERVAL', string | null>
   | ActionInterface<'CHANGE_SORT_COMMENTS_BY', string>

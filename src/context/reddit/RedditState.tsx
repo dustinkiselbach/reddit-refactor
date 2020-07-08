@@ -11,7 +11,6 @@ import {
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
   FILTER_POST_FROM_POSTS,
-  SET_LOADING,
   CHANGE_SORT_BY,
   CHANGE_SORT_BY_INTERVAL,
   SET_AFTER,
@@ -24,6 +23,8 @@ import {
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
+import { connect } from 'react-redux'
+import { setLoading } from '../../redux/actions/loadingActions'
 
 // subreddit
 // https://www.reddit.com/api/info.json?id={subreddit_id}
@@ -32,7 +33,7 @@ import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
 // defaults
 // https://www.reddit.com/subreddits/default.json
 
-const RedditState: React.FC<Props> = ({ children }) => {
+const RedditState: React.FC<Props> = ({ children, setLoading }) => {
   const initialState = {
     loading: false,
     subreddit: null,
@@ -74,6 +75,8 @@ const RedditState: React.FC<Props> = ({ children }) => {
         type: SET_AFTER,
         payload: res.data.data.after
       })
+
+      setLoading()
     } catch (err) {
       throw err
     }
@@ -194,9 +197,9 @@ const RedditState: React.FC<Props> = ({ children }) => {
     dispatch({ type: SET_SUBREDDIT, payload: subreddit })
   }
 
-  const setLoading = () => {
-    dispatch({ type: SET_LOADING, payload: null })
-  }
+  // const setLoading = () => {
+  //   dispatch({ type: SET_LOADING, payload: null })
+  // }
 
   const changeSortBy = (sortBy: string, sortByInterval?: string) => {
     dispatch({ type: CHANGE_SORT_BY, payload: sortBy })
@@ -227,7 +230,6 @@ const RedditState: React.FC<Props> = ({ children }) => {
         sortBy: state.sortBy,
         sortByInterval: state.sortByInterval,
         sortCommentsBy: state.sortCommentsBy,
-        loading: state.loading,
         after: state.after,
         tryTest,
         getPosts,
@@ -247,4 +249,4 @@ const RedditState: React.FC<Props> = ({ children }) => {
   )
 }
 
-export default RedditState
+export default connect(null, { setLoading })(RedditState)

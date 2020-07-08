@@ -4,7 +4,6 @@ import {
   TEST_TYPE,
   SET_SUBREDDIT,
   GET_DEFAULT_SUBREDDITS,
-  SET_LOADING,
   CHANGE_SORT_BY,
   SET_AFTER,
   GET_POST_DETAIL,
@@ -29,8 +28,7 @@ export default (state: State, action: AllActions): State => {
     case GET_POSTS: {
       return {
         ...state,
-        posts: [...state.posts!, action.payload],
-        loading: false
+        posts: [...state.posts!, action.payload]
       }
     }
     case CLEAR_POSTS: {
@@ -120,12 +118,7 @@ export default (state: State, action: AllActions): State => {
         after: action.payload
       }
     }
-    case SET_LOADING: {
-      return {
-        ...state,
-        loading: true
-      }
-    }
+
     default:
       return state
   }

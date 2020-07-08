@@ -9,14 +9,18 @@ import {
   GET_USERNAME,
   GET_USER_POSTS,
   CLEAR_USER_INFO,
-  CHANGE_SORT_USER_CONTENT_BY
+  CHANGE_SORT_USER_CONTENT_BY,
+  CLEAR_USER_POSTS
 } from '../types'
+import { setLoading } from '../../redux/actions/loadingActions'
+import { connect } from 'react-redux'
 
 interface Props {
   children: React.ReactNode
+  setLoading: () => void
 }
 
-const UserState: React.FC<Props> = ({ children }) => {
+const UserState: React.FC<Props> = ({ children, setLoading }) => {
   const initialState = {
     loading: false,
     test: 'test',
@@ -53,16 +57,22 @@ const UserState: React.FC<Props> = ({ children }) => {
     }
   }
 
-  const getUserPosts = async (userName: string) => {
-    try {
-      const res = await axios.get(
-        `https://oauth.reddit.com/user/${userName}/overview.json?raw_json=1`
-      )
+  const getUserPosts = async (userName: string | null) => {
+    if (userName) {
+      setLoading()
+      try {
+        const res = await axios.get(
+          `https://oauth.reddit.com/user/${userName}/overview?raw_json=1&sort=${state.sortUserContentBy}`
+        )
 
-      console.log(res)
-      dispatch({ type: GET_USER_POSTS, payload: res.data.data.children })
-    } catch (err) {
-      throw err
+        console.log(res)
+        setLoading()
+        dispatch({ type: GET_USER_POSTS, payload: res.data.data.children })
+      } catch (err) {
+        throw err
+      }
+    } else {
+      dispatch({ type: CLEAR_USER_POSTS, payload: null })
     }
   }
 
@@ -107,4 +117,4 @@ const UserState: React.FC<Props> = ({ children }) => {
   )
 }
 
-export default UserState
+export default connect(null, { setLoading })(UserState)

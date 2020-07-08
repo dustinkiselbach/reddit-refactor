@@ -1,10 +1,13 @@
 import React, { useContext, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import UserContext from '../../context/user/userContext'
 import { RouteComponentProps } from 'react-router-dom'
 import { UserHeader } from './UserHeader'
 import { UserTrophies } from './UserTrophies'
 import { Container } from '../style/basicStyles'
 import { UserPosts } from './UserPosts'
+import { ReduxState } from '../../redux/store'
+import { Loading } from '../layout/Loading'
 
 interface UserProps
   extends RouteComponentProps<{
@@ -12,24 +15,31 @@ interface UserProps
   }> {}
 
 export const User: React.FC<UserProps> = ({ match }) => {
+  const state = useSelector((state: ReduxState) => state.loading)
+
   const userContext = useContext(UserContext)
 
   const {
     userData,
     userPosts,
     userTrophies,
+    sortUserContentBy,
     getUserInfo,
     getUserPosts
   } = userContext
 
   useEffect(() => {
     getUserInfo!(match.params.userName)
-    getUserPosts!(match.params.userName)
 
     return () => {
       getUserInfo!(null)
+      getUserPosts!(null)
     }
   }, [])
+
+  useEffect(() => {
+    getUserPosts!(match.params.userName)
+  }, [sortUserContentBy])
 
   return (
     <Container>
@@ -39,7 +49,11 @@ export const User: React.FC<UserProps> = ({ match }) => {
           <UserTrophies userTrophies={userTrophies!} />
         </>
       )}
-      {userPosts && <UserPosts userPosts={userPosts} />}
+      {state.loading ? (
+        <Loading />
+      ) : (
+        <>{userPosts && <UserPosts userPosts={userPosts} />}</>
+      )}
     </Container>
   )
 }
