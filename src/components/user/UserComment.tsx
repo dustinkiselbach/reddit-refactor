@@ -33,8 +33,6 @@ export const UserComment: React.FC<UserCommentProps> = ({ comment }) => {
   } = comment
 
   return (
-    // a quick fix here to make sure that it is fetching the posts
-    // and not trying to filter
     <Link
       to={fixPermalinkUrl(permalink, link_id)}
       onClick={() => redditContext.clearPosts!()}
