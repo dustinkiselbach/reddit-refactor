@@ -7,7 +7,8 @@ import {
   CLEAR_USER_INFO,
   CHANGE_SORT_USER_CONTENT_BY,
   GET_USER_POSTS,
-  CLEAR_USER_POSTS
+  CLEAR_USER_POSTS,
+  SET_AFTER
 } from '../types'
 
 export default (state: State, action: AllActions) => {
@@ -52,9 +53,16 @@ export default (state: State, action: AllActions) => {
     case CLEAR_USER_INFO: {
       return {
         ...state,
+        after: null,
         userTrophies: null,
         userData: null,
         userName: null
+      }
+    }
+    case SET_AFTER: {
+      return {
+        ...state,
+        after: action.payload
       }
     }
     default:

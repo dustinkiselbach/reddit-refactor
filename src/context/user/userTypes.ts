@@ -1,6 +1,7 @@
 import { PostData, CommentData } from '../reddit/redditTypes'
 
 export type State = {
+  after?: string | null
   test?: string
   loading?: boolean
   userData?: UserData | null
@@ -58,3 +59,4 @@ export type AllActions =
   | ActionInterface<'CHANGE_SORT_USER_CONTENT_BY', string>
   | ActionInterface<'GET_USER_POSTS', (CommentData | PostData)[]>
   | ActionInterface<'CLEAR_USER_POSTS', null>
+  | ActionInterface<'SET_AFTER', string>

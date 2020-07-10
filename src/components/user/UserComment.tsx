@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { CommentData } from '../../context/reddit/redditTypes'
+import RedditContext from '../../context/reddit/redditContext'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 import { Link } from 'react-router-dom'
@@ -8,20 +9,36 @@ interface UserCommentProps {
   comment: CommentData
 }
 
+// quick fix to format the link to work seamlessly
+// with the way my post component works
+const fixPermalinkUrl = (permalink: string, linkId: string) => {
+  let linkArr = permalink.split('/')
+  linkArr[linkArr.length - 2] = linkId
+  return linkArr.join('/')
+}
+
 export const UserComment: React.FC<UserCommentProps> = ({ comment }) => {
+  const redditContext = useContext(RedditContext)
   const {
     data: {
       author,
       body_html,
       created_utc,
       link_title,
+      link_id,
       permalink,
       score,
       subreddit
     }
   } = comment
+
   return (
-    <Link to={permalink}>
+    // a quick fix here to make sure that it is fetching the posts
+    // and not trying to filter
+    <Link
+      to={fixPermalinkUrl(permalink, link_id)}
+      onClick={() => redditContext.clearPosts!()}
+    >
       <UserCommentContainer>
         <UserCommentPostTitle>{link_title}</UserCommentPostTitle>
         <UserCommentMeta>
@@ -49,6 +66,7 @@ const UserCommentContainer = styled.div`
   position: relative;
   margin: 1px 0;
   padding: 0.5rem;
+  overflow-x: scroll;
 
   a {
     color: ${props => props.theme.colors.primaryColor};

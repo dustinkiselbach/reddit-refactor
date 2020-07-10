@@ -11,6 +11,7 @@ import { DarkenBackground } from '../style/basicStyles'
 
 interface LeftNavProps {
   defaultSubreddits: DefaultSubreddit[]
+  basicSubreddits: string[]
   autocompleteSubreddits?: DefaultSubreddit[] | null
   setSubreddit: (subreddit: string | null) => void
   setShowLeft: React.Dispatch<boolean>
@@ -24,6 +25,7 @@ const fallbackIconUrl =
 const LeftNavPre: React.FC<LeftNavProps> = ({
   defaultSubreddits,
   autocompleteSubreddits,
+  basicSubreddits,
   setSubreddit,
   setShowLeft,
   subredditAutocomplete,
@@ -94,6 +96,15 @@ const LeftNavPre: React.FC<LeftNavProps> = ({
             </>
           ) : (
             <>
+              {basicSubreddits.map(subreddit => (
+                <SubredditItem
+                  key={subreddit}
+                  onClick={() => setSubreddit(subreddit)}
+                >
+                  <SubredditIcon icon={fallbackIconUrl} />
+                  <h4>{subreddit}</h4>
+                </SubredditItem>
+              ))}
               {defaultSubreddits.map(subreddit => (
                 <SubredditItem
                   key={subreddit.name}

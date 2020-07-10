@@ -42,8 +42,8 @@ export const Comment: React.FC<CommentProps> = ({
     const res = await getMoreComments(postName, children)
     setMoreComments(res)
   }
-  console.log(comment)
-  console.log(moreComments)
+  // console.log(comment)
+  // console.log(moreComments)
 
   if (isComment(comment)) {
     const {
@@ -206,6 +206,7 @@ const CommentContainer = styled(motion.div)<{
 `
 const CommentItem = styled.div`
   padding: 0.5rem;
+  overflow-x: scroll;
 `
 const CommentMeta = styled.ul`
   display: flex;

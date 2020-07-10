@@ -8,6 +8,7 @@ import {
   SET_AFTER,
   GET_POST_DETAIL,
   CLEAR_POST_DETAIL,
+  CLEAR_COMMENT_DETAIL,
   FILTER_POST_FROM_POSTS,
   SUBREDDIT_AUTOCOMPLETE,
   CHANGE_SORT_COMMENTS_BY,
@@ -45,7 +46,6 @@ export default (state: State, action: AllActions): State => {
       }
     }
     case GET_POST_ON_REFRESH: {
-      console.log(action.payload)
       return {
         ...state,
         post: action.payload
@@ -68,10 +68,16 @@ export default (state: State, action: AllActions): State => {
     case CLEAR_POST_DETAIL: {
       return {
         ...state,
-        post: null,
         comments: null
       }
     }
+    case CLEAR_COMMENT_DETAIL: {
+      return {
+        ...state,
+        comments: null
+      }
+    }
+
     case SET_SUBREDDIT: {
       return {
         ...state,

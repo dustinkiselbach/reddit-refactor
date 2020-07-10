@@ -47,6 +47,8 @@ export interface CommentData {
     id: string
     is_submitter: boolean
     link_title: string
+    link_permalink: string
+    link_id: string
     name: string
     parent_id: string
     permalink: string
@@ -84,7 +86,9 @@ export type State = {
   defaultSubreddits?: null | DefaultSubreddit[]
   autocompleteSubreddits?: null | DefaultSubreddit[]
   after?: string | null
+  basicSubreddits?: string[]
   clearPostDetail?: () => void
+  clearCommentDetail?: () => void
   tryTest?: () => void
   getPosts?: () => Promise<any>
   clearPosts?: () => void
@@ -121,3 +125,4 @@ export type AllActions =
   | ActionInterface<'FILTER_POST_FROM_POSTS', string>
   | ActionInterface<'SUBREDDIT_AUTOCOMPLETE', DefaultSubreddit[] | null>
   | ActionInterface<'CLEAR_POSTS', null>
+  | ActionInterface<'CLEAR_COMMENT_DETAIL', null>

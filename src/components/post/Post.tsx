@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
+import { useSelector } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
 import RedditContext from '../../context/reddit/redditContext'
 import { SubredditPost } from '../subreddit/SubredditPost'
@@ -8,6 +9,8 @@ import { motion } from 'framer-motion'
 import { parentVariants } from '../../utils/variants'
 import { customEase } from '../../utils/customEase'
 import { Container } from '../style/basicStyles'
+import { ReduxState } from '../../redux/store'
+import { Loading } from '../layout/Loading'
 
 interface PostProps
   extends RouteComponentProps<{
@@ -20,6 +23,8 @@ interface PostProps
 export const Post: React.FC<PostProps> = ({ match }) => {
   const [clickedId, setClickedId] = useState<null | string>(null)
 
+  const state = useSelector((state: ReduxState) => state.loading)
+
   const {
     params: { subreddit, id, title, name }
   } = match
@@ -30,6 +35,7 @@ export const Post: React.FC<PostProps> = ({ match }) => {
     comments,
     sortCommentsBy,
     clearPostDetail,
+    clearCommentDetail,
     getPostDetail,
     getMoreComments
   } = redditContext
@@ -39,38 +45,45 @@ export const Post: React.FC<PostProps> = ({ match }) => {
 
     return () => {
       clearPostDetail!()
+      clearCommentDetail!()
     }
   }, [sortCommentsBy])
 
   return (
-    <Container
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.2, ease: customEase }}
-    >
-      {post && (
-        <>
-          <SubredditPost post={post} detail={true} />
-        </>
+    <>
+      {state.loading ? (
+        <Loading />
+      ) : (
+        <Container
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.2, ease: customEase }}
+        >
+          {post && (
+            <>
+              <SubredditPost post={post} detail={true} />
+            </>
+          )}
+          {comments && (
+            <>
+              <CommentsContainer
+                variants={parentVariants}
+                initial='hidden'
+                animate='visible'
+              >
+                <Comments
+                  comments={comments}
+                  getMoreComments={getMoreComments!}
+                  postName={name}
+                  setClickedId={setClickedId}
+                  clickedId={clickedId}
+                />
+              </CommentsContainer>
+            </>
+          )}
+        </Container>
       )}
-      {comments && (
-        <>
-          <CommentsContainer
-            variants={parentVariants}
-            initial='hidden'
-            animate='visible'
-          >
-            <Comments
-              comments={comments}
-              getMoreComments={getMoreComments!}
-              postName={name}
-              setClickedId={setClickedId}
-              clickedId={clickedId}
-            />
-          </CommentsContainer>
-        </>
-      )}
-    </Container>
+    </>
   )
 }
 

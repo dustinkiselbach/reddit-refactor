@@ -22,7 +22,7 @@ export const Navbar: React.FC<Props> = () => {
   const [showSort, setShowSort] = useState(false)
   const [showSubSort, setShowSubSort] = useState(false)
   const [sortLabel, setSortLabel] = useState<null | string>(null)
-  const [showLeft, setShowLeft] = useState(true)
+  const [showLeft, setShowLeft] = useState(false)
   const [showRight, setShowRight] = useState(false)
 
   const handlers = useSwipeable({
@@ -48,9 +48,11 @@ export const Navbar: React.FC<Props> = () => {
     sortByInterval,
     sortCommentsBy,
     defaultSubreddits,
+    basicSubreddits,
     autocompleteSubreddits,
     post,
     getPosts,
+    clearCommentDetail,
     clearPosts,
     changeSortBy,
     changeSortCommentsBy,
@@ -91,7 +93,7 @@ export const Navbar: React.FC<Props> = () => {
             <span className='material-icons'>arrow_drop_down</span>
           </NavIcon>
 
-          <NavIcon onClick={getPosts}>
+          <NavIcon onClick={() => window.location.reload()}>
             <span className='material-icons'>refresh</span>
           </NavIcon>
           <NavIcon onClick={() => setShowSort(!showSort)}>
@@ -126,7 +128,7 @@ export const Navbar: React.FC<Props> = () => {
             <span className='material-icons'>arrow_drop_down</span>
           </NavIcon>
 
-          <NavIcon onClick={getPosts}>
+          <NavIcon onClick={() => window.location.reload()}>
             <span className='material-icons'>refresh</span>
           </NavIcon>
           <NavIcon onClick={() => setShowSort(!showSort)}>
@@ -157,6 +159,7 @@ export const Navbar: React.FC<Props> = () => {
               <LeftNav
                 defaultSubreddits={defaultSubreddits}
                 autocompleteSubreddits={autocompleteSubreddits}
+                basicSubreddits={basicSubreddits!}
                 setSubreddit={setSubreddit!}
                 setShowLeft={setShowLeft}
                 subredditAutocomplete={subredditAutocomplete!}

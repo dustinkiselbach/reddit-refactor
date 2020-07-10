@@ -19,7 +19,8 @@ import {
   SUBREDDIT_AUTOCOMPLETE,
   CHANGE_SORT_COMMENTS_BY,
   GET_SUBREDDIT_INFO,
-  GET_POST_ON_REFRESH
+  GET_POST_ON_REFRESH,
+  CLEAR_COMMENT_DETAIL
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
@@ -35,8 +36,7 @@ import { setLoading } from '../../redux/actions/loadingActions'
 
 const RedditState: React.FC<Props> = ({ children, setLoading }) => {
   const initialState = {
-    loading: false,
-    subreddit: null,
+    subreddit: 'all',
     subredditInfo: null,
     defaultSubreddits: null,
     autocompleteSubreddits: null,
@@ -46,7 +46,8 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
     posts: [],
     post: null,
     comments: null,
-    after: null
+    after: null,
+    basicSubreddits: ['all', 'popular']
   }
 
   const [state, dispatch] = useReducer(redditReducer, initialState)
@@ -75,10 +76,11 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
         type: SET_AFTER,
         payload: res.data.data.after
       })
-
-      setLoading()
     } catch (err) {
       throw err
+    }
+    if (!state.after) {
+      setLoading()
     }
   }
 
@@ -108,6 +110,9 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
       }
     } else {
       // SLOWER BUT WILL WORK IF PAGE IS RELOADED
+      // GET THE SUBREDDIT FROM THE URL
+      setSubreddit(permalink.split('/')[0])
+      setLoading()
       try {
         const res = await axios.get(
           `https://oauth.reddit.com/r/${permalink}.json?raw_json=1&sort=${state.sortCommentsBy}`
@@ -121,6 +126,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
           type: GET_POST_ON_REFRESH,
           payload: res.data[0].data.children[0]
         })
+        setLoading()
       } catch (err) {
         throw err
       }
@@ -193,6 +199,10 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
     dispatch({ type: CLEAR_POST_DETAIL, payload: null })
   }
 
+  const clearCommentDetail = () => {
+    dispatch({ type: CLEAR_COMMENT_DETAIL, payload: null })
+  }
+
   const setSubreddit = (subreddit: string | null) => {
     dispatch({ type: SET_SUBREDDIT, payload: subreddit })
   }
@@ -231,6 +241,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
         sortByInterval: state.sortByInterval,
         sortCommentsBy: state.sortCommentsBy,
         after: state.after,
+        basicSubreddits: state.basicSubreddits,
         tryTest,
         getPosts,
         clearPosts,
@@ -238,6 +249,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
         getMoreComments,
         getSubredditInfo,
         clearPostDetail,
+        clearCommentDetail,
         setSubreddit,
         subredditAutocomplete,
         changeSortBy,

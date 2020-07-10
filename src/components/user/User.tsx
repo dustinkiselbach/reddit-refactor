@@ -8,6 +8,9 @@ import { Container } from '../style/basicStyles'
 import { UserPosts } from './UserPosts'
 import { ReduxState } from '../../redux/store'
 import { Loading } from '../layout/Loading'
+import { useInView } from 'react-intersection-observer'
+import { parentVariants } from '../../utils/variants'
+import { motion } from 'framer-motion'
 
 interface UserProps
   extends RouteComponentProps<{
@@ -15,11 +18,17 @@ interface UserProps
   }> {}
 
 export const User: React.FC<UserProps> = ({ match }) => {
+  const [inViewRef, inView] = useInView({
+    triggerOnce: true,
+    rootMargin: '400px 0px'
+  })
+
   const state = useSelector((state: ReduxState) => state.loading)
 
   const userContext = useContext(UserContext)
 
   const {
+    after,
     userData,
     userPosts,
     userTrophies,
@@ -41,6 +50,12 @@ export const User: React.FC<UserProps> = ({ match }) => {
     getUserPosts!(match.params.userName)
   }, [sortUserContentBy])
 
+  useEffect(() => {
+    if (inView && after) {
+      getUserPosts!(match.params.userName)
+    }
+  }, [inView])
+
   return (
     <Container>
       {userData && userTrophies && (
@@ -52,7 +67,19 @@ export const User: React.FC<UserProps> = ({ match }) => {
       {state.loading ? (
         <Loading />
       ) : (
-        <>{userPosts && <UserPosts userPosts={userPosts} />}</>
+        <motion.div
+          variants={parentVariants}
+          initial='hidden'
+          animate='visible'
+        >
+          {userPosts && (
+            <UserPosts
+              after={after!}
+              inViewRef={inViewRef}
+              userPosts={userPosts}
+            />
+          )}
+        </motion.div>
       )}
     </Container>
   )

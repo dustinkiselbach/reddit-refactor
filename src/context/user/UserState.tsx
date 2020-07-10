@@ -10,7 +10,8 @@ import {
   GET_USER_POSTS,
   CLEAR_USER_INFO,
   CHANGE_SORT_USER_CONTENT_BY,
-  CLEAR_USER_POSTS
+  CLEAR_USER_POSTS,
+  SET_AFTER
 } from '../types'
 import { setLoading } from '../../redux/actions/loadingActions'
 import { connect } from 'react-redux'
@@ -22,6 +23,7 @@ interface Props {
 
 const UserState: React.FC<Props> = ({ children, setLoading }) => {
   const initialState = {
+    after: null,
     loading: false,
     test: 'test',
     userName: null,
@@ -58,18 +60,25 @@ const UserState: React.FC<Props> = ({ children, setLoading }) => {
   }
 
   const getUserPosts = async (userName: string | null) => {
+    // if there is an username fetch data else clear
     if (userName) {
-      setLoading()
+      if (!state.after) {
+        setLoading()
+      }
       try {
         const res = await axios.get(
-          `https://oauth.reddit.com/user/${userName}/overview?raw_json=1&sort=${state.sortUserContentBy}`
+          `https://oauth.reddit.com/user/${userName}/overview?raw_json=1&sort=${state.sortUserContentBy}&after=${state.after}`
         )
 
         console.log(res)
-        setLoading()
+
+        dispatch({ type: SET_AFTER, payload: res.data.data.after })
         dispatch({ type: GET_USER_POSTS, payload: res.data.data.children })
       } catch (err) {
         throw err
+      }
+      if (!state.after) {
+        setLoading()
       }
     } else {
       dispatch({ type: CLEAR_USER_POSTS, payload: null })
@@ -102,6 +111,7 @@ const UserState: React.FC<Props> = ({ children, setLoading }) => {
   return (
     <UserContext.Provider
       value={{
+        after: state.after,
         sortUserContentBy: state.sortUserContentBy,
         userData: state.userData,
         userPosts: state.userPosts,

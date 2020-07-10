@@ -45,4 +45,5 @@ const RightNavMenu = styled(motion.div)`
   z-index: 4;
   overflow-y: scroll;
   right: 0;
+  padding: 1rem;
 `
