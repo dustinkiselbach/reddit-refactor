@@ -21,18 +21,20 @@ const AuthState: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState)
 
   useEffect(() => {
-    console.log('rolllling')
+    const currentTime = moment()
 
-    if (localStorage.getItem('token')) {
+    if (
+      localStorage.getItem('token') &&
+      moment(localStorage.getItem('exp')) > currentTime
+    ) {
       setAuthToken(`bearer ${localStorage.getItem('token')}`)
       setAuthenticated()
-
-      const currentTime = moment()
-
-      if (moment(localStorage.getItem('exp')) < currentTime) {
-        localStorage.clear()
-        applicationOnlyAuth()
-      }
+    } else if (
+      localStorage.getItem('token') &&
+      moment(localStorage.getItem('exp')) < currentTime
+    ) {
+      localStorage.clear()
+      applicationOnlyAuth()
     } else {
       applicationOnlyAuth()
     }
