@@ -206,7 +206,7 @@ const CommentContainer = styled(motion.div)<{
 `
 const CommentItem = styled.div`
   padding: 0.5rem;
-  overflow-x: scroll;
+  overflow-x: hidden;
 `
 const CommentMeta = styled.ul`
   display: flex;

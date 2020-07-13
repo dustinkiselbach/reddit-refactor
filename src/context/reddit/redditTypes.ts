@@ -1,3 +1,5 @@
+import { Action } from 'redux'
+
 export interface Props {
   children: React.ReactNode
   setLoading: () => void
@@ -74,9 +76,28 @@ export interface CommentMore {
   kind: 'more'
 }
 
+export interface SubredditInfo {
+  data: {
+    accounts_active: number
+    created_utc: number
+    description_html: string
+    display_name: string
+    display_name_prefixed: string
+    header_img: string
+    icon_img: string
+    primary_color: string
+    subscribers: number
+    title: string
+    user_is_subscriber: boolean
+  }
+  kind: 't5'
+}
+
 export type State = {
+  trendingSubreddits?: null | string[]
+  searchTerm?: null | string
   subreddit?: null | string
-  subredditInfo?: any
+  subredditInfo?: SubredditInfo | null
   sortBy?: string
   sortByInterval?: string | null
   sortCommentsBy?: string
@@ -100,6 +121,7 @@ export type State = {
   changeSortBy?: (sortBy: string, sortByInterval?: string) => void
   changeSortCommentsBy?: (sortCommentsBy: string) => void
   setLoading?: () => void
+  changeSearchTerm?: (search: string) => void
 }
 
 type ActionInterface<T extends string, U> = {
@@ -119,10 +141,13 @@ export type AllActions =
   | ActionInterface<'CHANGE_SORT_BY_INTERVAL', string | null>
   | ActionInterface<'CHANGE_SORT_COMMENTS_BY', string>
   | ActionInterface<'GET_DEFAULT_SUBREDDITS', DefaultSubreddit[]>
-  | ActionInterface<'GET_SUBREDDIT_INFO', any>
+  | ActionInterface<'GET_SUBREDDIT_INFO', SubredditInfo>
   | ActionInterface<'SET_AFTER', string | null>
   | ActionInterface<'CLEAR_POST_DETAIL', null>
   | ActionInterface<'FILTER_POST_FROM_POSTS', string>
   | ActionInterface<'SUBREDDIT_AUTOCOMPLETE', DefaultSubreddit[] | null>
   | ActionInterface<'CLEAR_POSTS', null>
   | ActionInterface<'CLEAR_COMMENT_DETAIL', null>
+  | ActionInterface<'CLEAR_SUBREDDIT_INFO', null>
+  | ActionInterface<'GET_TRENDING_SUBREDDITS', string[]>
+  | ActionInterface<'CHANGE_SEARCH_TERM', string | null>

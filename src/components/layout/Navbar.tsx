@@ -42,6 +42,8 @@ export const Navbar: React.FC<Props> = () => {
 
   const redditContext = useContext(RedditContext)
   const {
+    trendingSubreddits,
+    searchTerm,
     subreddit,
     subredditInfo,
     sortBy,
@@ -51,17 +53,21 @@ export const Navbar: React.FC<Props> = () => {
     basicSubreddits,
     autocompleteSubreddits,
     post,
-    getPosts,
-    clearCommentDetail,
     clearPosts,
     changeSortBy,
+    changeSearchTerm,
     changeSortCommentsBy,
     setSubreddit,
     subredditAutocomplete
   } = redditContext
 
   const userContext = useContext(UserContext)
-  const { userName, sortUserContentBy, changeSortUserContentBy } = userContext
+  const {
+    userName,
+    sortUserContentBy,
+    getUserPosts,
+    changeSortUserContentBy
+  } = userContext
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
@@ -128,7 +134,7 @@ export const Navbar: React.FC<Props> = () => {
             <span className='material-icons'>arrow_drop_down</span>
           </NavIcon>
 
-          <NavIcon onClick={() => window.location.reload()}>
+          <NavIcon onClick={() => getUserPosts!(null)}>
             <span className='material-icons'>refresh</span>
           </NavIcon>
           <NavIcon onClick={() => setShowSort(!showSort)}>
@@ -163,14 +169,28 @@ export const Navbar: React.FC<Props> = () => {
                 setSubreddit={setSubreddit!}
                 setShowLeft={setShowLeft}
                 subredditAutocomplete={subredditAutocomplete!}
+                searchTerm={searchTerm}
+                changeSearchTerm={changeSearchTerm!}
               />
             </div>
           )}
         </AnimatePresence>
         <AnimatePresence>
-          {showRight && subredditInfo && (
+          {showRight && (
             <div {...handlers}>
-              <RightNav subredditInfo={subredditInfo} />
+              {subredditInfo ? (
+                <RightNav
+                  subredditInfo={subredditInfo}
+                  setSubreddit={setSubreddit!}
+                  setShowRight={setShowRight}
+                />
+              ) : (
+                <RightNav
+                  trendingSubreddits={trendingSubreddits}
+                  setSubreddit={setSubreddit!}
+                  setShowRight={setShowRight}
+                />
+              )}
             </div>
           )}
         </AnimatePresence>

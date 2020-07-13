@@ -14,7 +14,10 @@ import {
   CHANGE_SORT_COMMENTS_BY,
   GET_SUBREDDIT_INFO,
   CHANGE_SORT_BY_INTERVAL,
-  GET_POST_ON_REFRESH
+  GET_POST_ON_REFRESH,
+  GET_TRENDING_SUBREDDITS,
+  CLEAR_SUBREDDIT_INFO,
+  CHANGE_SEARCH_TERM
 } from '../types'
 import { State, AllActions, PostData } from './redditTypes'
 
@@ -68,7 +71,13 @@ export default (state: State, action: AllActions): State => {
     case CLEAR_POST_DETAIL: {
       return {
         ...state,
-        comments: null
+        post: null
+      }
+    }
+    case CLEAR_SUBREDDIT_INFO: {
+      return {
+        ...state,
+        subredditInfo: null
       }
     }
     case CLEAR_COMMENT_DETAIL: {
@@ -90,6 +99,12 @@ export default (state: State, action: AllActions): State => {
       return {
         ...state,
         defaultSubreddits: action.payload
+      }
+    }
+    case GET_TRENDING_SUBREDDITS: {
+      return {
+        ...state,
+        trendingSubreddits: action.payload
       }
     }
     case SUBREDDIT_AUTOCOMPLETE: {
@@ -116,6 +131,12 @@ export default (state: State, action: AllActions): State => {
       return {
         ...state,
         sortCommentsBy: action.payload
+      }
+    }
+    case CHANGE_SEARCH_TERM: {
+      return {
+        ...state,
+        searchTerm: action.payload
       }
     }
     case SET_AFTER: {

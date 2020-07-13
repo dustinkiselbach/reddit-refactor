@@ -64,7 +64,7 @@ const UserCommentContainer = styled.div`
   position: relative;
   margin: 1px 0;
   padding: 0.5rem;
-  overflow-x: scroll;
+  overflow-x: hidden;
 
   a {
     color: ${props => props.theme.colors.primaryColor};

@@ -8,6 +8,7 @@ import { customEase } from '../../utils/customEase'
 import { LeftNavSearch } from './LeftNavSearch'
 import { toggleTheme } from '../../redux/actions/themeActions'
 import { DarkenBackground } from '../style/basicStyles'
+import { Link } from 'react-router-dom'
 
 interface LeftNavProps {
   defaultSubreddits: DefaultSubreddit[]
@@ -17,6 +18,8 @@ interface LeftNavProps {
   setShowLeft: React.Dispatch<boolean>
   subredditAutocomplete: (query: string) => void
   toggleTheme: any
+  searchTerm?: string | null
+  changeSearchTerm: (search: string) => void
 }
 
 const fallbackIconUrl =
@@ -28,6 +31,8 @@ const LeftNavPre: React.FC<LeftNavProps> = ({
   basicSubreddits,
   setSubreddit,
   setShowLeft,
+  searchTerm,
+  changeSearchTerm,
   subredditAutocomplete,
   toggleTheme
 }) => {
@@ -70,6 +75,7 @@ const LeftNavPre: React.FC<LeftNavProps> = ({
             setSubreddit={setSubreddit}
             setShowLeft={setShowLeft}
             subredditAutocomplete={subredditAutocomplete}
+            changeSearchTerm={changeSearchTerm}
           />
         </SearchContainer>
         <SubredditsList
@@ -93,6 +99,14 @@ const LeftNavPre: React.FC<LeftNavProps> = ({
                   <h4>{subreddit.name}</h4>
                 </SubredditItem>
               ))}
+              {/* LINK TO GO TO USER  */}
+              <SubredditItem>
+                <SubredditIcon icon={fallbackIconUrl} />
+
+                <h4>
+                  <Link to={`/user/${searchTerm}`}>/u/{searchTerm}</Link>
+                </h4>
+              </SubredditItem>
             </>
           ) : (
             <>
@@ -208,6 +222,7 @@ const SubredditItem = styled.li`
     transition: 0.2s all ease-in-out;
     z-index: -1;
   }
+
   &:active {
     &::after {
       background-color: ${props => props.theme.colors.navActive};

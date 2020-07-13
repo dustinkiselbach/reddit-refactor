@@ -47,8 +47,10 @@ export const User: React.FC<UserProps> = ({ match }) => {
   }, [])
 
   useEffect(() => {
-    getUserPosts!(match.params.userName)
-  }, [sortUserContentBy])
+    if (userPosts?.length === 0) {
+      getUserPosts!(match.params.userName)
+    }
+  }, [sortUserContentBy, userPosts])
 
   useEffect(() => {
     if (inView && after) {

@@ -20,12 +20,16 @@ import {
   CHANGE_SORT_COMMENTS_BY,
   GET_SUBREDDIT_INFO,
   GET_POST_ON_REFRESH,
-  CLEAR_COMMENT_DETAIL
+  CLEAR_COMMENT_DETAIL,
+  GET_TRENDING_SUBREDDITS,
+  CLEAR_SUBREDDIT_INFO,
+  CHANGE_SEARCH_TERM
 } from '../types'
 import { Props } from './redditTypes'
 import { defaultSubredditsParser } from '../../utils/defaultSubredditsParser'
 import { connect } from 'react-redux'
 import { setLoading } from '../../redux/actions/loadingActions'
+import activitiesContext from '../auth/authContext'
 
 // subreddit
 // https://www.reddit.com/api/info.json?id={subreddit_id}
@@ -36,10 +40,12 @@ import { setLoading } from '../../redux/actions/loadingActions'
 
 const RedditState: React.FC<Props> = ({ children, setLoading }) => {
   const initialState = {
+    trendingSubreddits: null,
     subreddit: 'all',
     subredditInfo: null,
     defaultSubreddits: null,
     autocompleteSubreddits: null,
+    searchTerm: null,
     sortBy: 'hot',
     sortByInterval: null,
     sortCommentsBy: 'suggested',
@@ -54,6 +60,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
 
   useEffect(() => {
     getDefaultSubreddits()
+    getTrendingSubreddits()
   }, [])
 
   const getPosts = async () => {
@@ -159,6 +166,18 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
     }
   }
 
+  // using fetch because this endpoint won't accept headers
+  const getTrendingSubreddits = async () => {
+    try {
+      const data = await (
+        await fetch('https://www.reddit.com/api/trending_subreddits.json')
+      ).json()
+      dispatch({ type: GET_TRENDING_SUBREDDITS, payload: data.subreddit_names })
+    } catch (err) {
+      throw err
+    }
+  }
+
   const subredditAutocomplete = async (query: string) => {
     if (query.length === 0) {
       dispatch({
@@ -181,15 +200,34 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
   }
 
   const getSubredditInfo = async () => {
-    try {
-      const res = await axios.get(
-        `https://oauth.reddit.com/r/${state.subreddit}/about`
-      )
+    if (state.subreddit && state.basicSubreddits) {
+      if (state.basicSubreddits.includes(state.subreddit)) {
+        dispatch({
+          type: CLEAR_SUBREDDIT_INFO,
+          payload: null
+        })
+      } else {
+        try {
+          const res = await axios.get(
+            `https://oauth.reddit.com/r/${state.subreddit}/about`
+          )
 
-      dispatch({
-        type: GET_SUBREDDIT_INFO,
-        payload: res.data
-      })
+          dispatch({
+            type: GET_SUBREDDIT_INFO,
+            payload: res.data
+          })
+        } catch (err) {
+          throw err
+        }
+      }
+    }
+  }
+  const subredditSearch = async (q: string) => {
+    try {
+      const res = await axios.post(
+        `https://oauth.reddit.com/api/search_subreddits?query=${q}&include_over_18`
+      )
+      console.log(res)
     } catch (err) {
       throw err
     }
@@ -223,6 +261,10 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
     dispatch({ type: CHANGE_SORT_COMMENTS_BY, payload: sortCommentsBy })
   }
 
+  const changeSearchTerm = (search: string) => {
+    dispatch({ type: CHANGE_SEARCH_TERM, payload: search })
+  }
+
   const tryTest = () => {
     dispatch({ type: TEST_TYPE, payload: null })
   }
@@ -230,6 +272,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
   return (
     <RedditContext.Provider
       value={{
+        trendingSubreddits: state.trendingSubreddits,
         subreddit: state.subreddit,
         defaultSubreddits: state.defaultSubreddits,
         autocompleteSubreddits: state.autocompleteSubreddits,
@@ -240,6 +283,7 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
         sortBy: state.sortBy,
         sortByInterval: state.sortByInterval,
         sortCommentsBy: state.sortCommentsBy,
+        searchTerm: state.searchTerm,
         after: state.after,
         basicSubreddits: state.basicSubreddits,
         tryTest,
@@ -253,7 +297,8 @@ const RedditState: React.FC<Props> = ({ children, setLoading }) => {
         setSubreddit,
         subredditAutocomplete,
         changeSortBy,
-        changeSortCommentsBy
+        changeSortCommentsBy,
+        changeSearchTerm
       }}
     >
       {children}

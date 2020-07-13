@@ -41,13 +41,15 @@ export default (state: State, action: AllActions) => {
       return {
         ...state,
         sortUserContentBy: action.payload,
+        after: null,
         userPosts: []
       }
     }
     case CLEAR_USER_POSTS: {
       return {
         ...state,
-        userPosts: []
+        userPosts: [],
+        after: null
       }
     }
     case CLEAR_USER_INFO: {

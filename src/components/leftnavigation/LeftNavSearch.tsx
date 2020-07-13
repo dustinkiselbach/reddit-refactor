@@ -7,19 +7,22 @@ interface LeftNavSearchProps {
   setSubreddit: (subreddit: string | null) => void
   setShowLeft: React.Dispatch<boolean>
   subredditAutocomplete: (query: string) => void
+  changeSearchTerm: (search: string) => void
 }
 
 export const LeftNavSearch: React.FC<LeftNavSearchProps> = ({
   placeholder,
   setSubreddit,
   setShowLeft,
-  subredditAutocomplete
+  subredditAutocomplete,
+  changeSearchTerm
 }) => {
   const [field, setField] = useState('')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setField(e.target.value)
     subredditAutocomplete(e.target.value)
+    changeSearchTerm(e.target.value)
   }
 
   const onSubmit = () => {
