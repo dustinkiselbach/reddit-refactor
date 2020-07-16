@@ -21,12 +21,12 @@ const App: React.FC = () => {
   return (
     <>
       <Provider store={store}>
-        <AuthState>
-          <AuthProvider>
-            <RedditState>
-              <UserState>
-                <MyThemeProvider>
-                  <GlobalStyle />
+        <MyThemeProvider>
+          <GlobalStyle />
+          <AuthState>
+            <AuthProvider>
+              <RedditState>
+                <UserState>
                   <Router>
                     <Navbar />
                     <Switch>
@@ -39,11 +39,11 @@ const App: React.FC = () => {
                       <Route exact path='/user/:userName' component={User} />
                     </Switch>
                   </Router>
-                </MyThemeProvider>
-              </UserState>
-            </RedditState>
-          </AuthProvider>
-        </AuthState>
+                </UserState>
+              </RedditState>
+            </AuthProvider>
+          </AuthState>
+        </MyThemeProvider>
       </Provider>
     </>
   )

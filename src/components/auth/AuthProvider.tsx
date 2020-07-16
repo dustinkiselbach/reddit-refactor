@@ -8,13 +8,5 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const authContext = useContext(AuthContext)
 
-  return (
-    <>
-      {authContext.authenticated ? (
-        children
-      ) : (
-        <div style={{ backgroundColor: '#000000', height: '100vh' }} />
-      )}
-    </>
-  )
+  return <>{authContext.authenticated ? children : <div />}</>
 }
