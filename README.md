@@ -1,3 +1,5 @@
+Built for mobile, this is a Reddit Sync clone that runs in the browser. This app is an alternative way to view one of the most popular websites on the internet, Reddit. All the data is fetched from Reddit's robust api. It features custom transitions made with FramerMotion and Styled Components. The state is handled by Redux, and React's context API. Credit for the design goes to the Reddit Sync team.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
