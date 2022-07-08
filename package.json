@@ -17,7 +17,7 @@
     "@types/uuid": "^8.0.0",
     "axios": "^0.21.2",
     "framer-motion": "^1.11.1",
-    "moment": "^2.26.0",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.31",
     "qs": "^6.9.4",
     "react": "^16.13.1",
