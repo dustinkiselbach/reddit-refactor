@@ -18,7 +18,7 @@
     "axios": "^0.21.2",
     "framer-motion": "^1.11.1",
     "moment": "^2.26.0",
-    "moment-timezone": "^0.5.31",
+    "moment-timezone": "^0.5.35",
     "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
